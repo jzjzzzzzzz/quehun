@@ -1,0 +1,19 @@
+{
+  "tiles": [
+    {
+      "tile": "characters-1",
+      "alias": "m1",
+      "compact": "1m",
+      "unicode": "🀇",
+      "suit": "characters",
+      "rank": 1,
+      "terminal": true,
+      "honor": false,
+      "simple": false
+    }
+  ],
+  "hands": [],
+  "invalid": [],
+  "dora": [],
+  "validation": []
+}
