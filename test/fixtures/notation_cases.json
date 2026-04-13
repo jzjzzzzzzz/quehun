@@ -10,6 +10,17 @@
       "terminal": true,
       "honor": false,
       "simple": false
+    },
+    {
+      "tile": "characters-2",
+      "alias": "m2",
+      "compact": "2m",
+      "unicode": "🀈",
+      "suit": "characters",
+      "rank": 2,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
