@@ -32,6 +32,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "characters-4",
+      "alias": "m4",
+      "compact": "4m",
+      "unicode": "🀊",
+      "suit": "characters",
+      "rank": 4,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
