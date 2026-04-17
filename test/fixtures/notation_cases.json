@@ -54,6 +54,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "characters-6",
+      "alias": "m6",
+      "compact": "6m",
+      "unicode": "🀌",
+      "suit": "characters",
+      "rank": 6,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
