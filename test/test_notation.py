@@ -89,3 +89,9 @@ def test_summary_counts_unique_shapes_once():
 def test_bonus_tile_is_not_accepted_as_a_playable_hand_tile():
     with pytest.raises(NotationError, match="unknown tile"):
         parse_compact_hand(["spring"])
+
+
+@pytest.mark.parametrize("tile", ["bogus", "spring", None])
+def test_compact_formatter_rejects_non_playable_tiles(tile):
+    with pytest.raises(NotationError, match="unknown tile"):
+        format_compact_hand([tile])

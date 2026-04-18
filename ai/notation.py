@@ -213,9 +213,10 @@ def format_compact_hand(hand: Iterable[str], *, sort_tiles: bool = True) -> str:
     """Format tiles as grouped compact notation."""
 
     raw = list(hand or [])
-    tiles = sort_hand(raw) if sort_tiles else [canonical_tile(tile) for tile in raw]
-    if any(tile not in PLAYABLE_TILES for tile in tiles):
+    canonical = [canonical_tile(tile) for tile in raw]
+    if any(tile not in PLAYABLE_TILES for tile in canonical):
         raise NotationError("cannot format an unknown tile")
+    tiles = sorted(canonical, key=tile_sort_key) if sort_tiles else canonical
 
     groups: list[str] = []
     for suit in ("characters", "dots", "bamboo"):
