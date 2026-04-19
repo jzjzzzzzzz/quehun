@@ -76,6 +76,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "characters-8",
+      "alias": "m8",
+      "compact": "8m",
+      "unicode": "🀎",
+      "suit": "characters",
+      "rank": 8,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
