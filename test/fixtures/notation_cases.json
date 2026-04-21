@@ -98,6 +98,17 @@
       "terminal": true,
       "honor": false,
       "simple": false
+    },
+    {
+      "tile": "dots-1",
+      "alias": "p1",
+      "compact": "1p",
+      "unicode": "🀙",
+      "suit": "dots",
+      "rank": 1,
+      "terminal": true,
+      "honor": false,
+      "simple": false
     }
   ],
   "hands": [],
