@@ -109,6 +109,17 @@
       "terminal": true,
       "honor": false,
       "simple": false
+    },
+    {
+      "tile": "dots-2",
+      "alias": "p2",
+      "compact": "2p",
+      "unicode": "🀚",
+      "suit": "dots",
+      "rank": 2,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
