@@ -120,6 +120,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "dots-3",
+      "alias": "p3",
+      "compact": "3p",
+      "unicode": "🀛",
+      "suit": "dots",
+      "rank": 3,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
