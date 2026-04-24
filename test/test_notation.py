@@ -5,6 +5,7 @@ import pytest
 
 from ai.notation import (
     NotationError,
+    count_tiles,
     dora_from_indicators,
     format_compact_hand,
     format_unicode_hand,
@@ -95,3 +96,9 @@ def test_bonus_tile_is_not_accepted_as_a_playable_hand_tile():
 def test_compact_formatter_rejects_non_playable_tiles(tile):
     with pytest.raises(NotationError, match="unknown tile"):
         format_compact_hand([tile])
+
+
+def test_count_tiles_canonicalizes_aliases_and_drops_noise():
+    counts = count_tiles(["m1", "characters-1", "east", "bogus"])
+
+    assert counts == {"characters-1": 2, "honors-east": 1}
