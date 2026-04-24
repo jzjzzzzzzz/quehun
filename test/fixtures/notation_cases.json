@@ -131,6 +131,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "dots-4",
+      "alias": "p4",
+      "compact": "4p",
+      "unicode": "🀜",
+      "suit": "dots",
+      "rank": 4,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
