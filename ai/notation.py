@@ -153,6 +153,12 @@ def sort_hand(hand: Iterable[str]) -> list[str]:
     return sorted((tile for tile in tiles if tile in PLAYABLE_TILES), key=tile_sort_key)
 
 
+def count_tiles(hand: Iterable[str]) -> Counter[str]:
+    """Count playable tiles after canonicalization."""
+
+    return Counter(sort_hand(hand))
+
+
 def parse_compact_hand(value: str | Iterable[str]) -> list[str]:
     """Parse compact, Unicode, or separated alias notation.
 
