@@ -142,6 +142,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "dots-5",
+      "alias": "p5",
+      "compact": "5p",
+      "unicode": "🀝",
+      "suit": "dots",
+      "rank": 5,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
