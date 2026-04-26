@@ -153,6 +153,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "dots-6",
+      "alias": "p6",
+      "compact": "6p",
+      "unicode": "🀞",
+      "suit": "dots",
+      "rank": 6,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
