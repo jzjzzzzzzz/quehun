@@ -164,6 +164,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "dots-7",
+      "alias": "p7",
+      "compact": "7p",
+      "unicode": "🀟",
+      "suit": "dots",
+      "rank": 7,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
