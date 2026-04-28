@@ -175,6 +175,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "dots-8",
+      "alias": "p8",
+      "compact": "8p",
+      "unicode": "🀠",
+      "suit": "dots",
+      "rank": 8,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
