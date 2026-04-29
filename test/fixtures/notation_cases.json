@@ -186,6 +186,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "dots-9",
+      "alias": "p9",
+      "compact": "9p",
+      "unicode": "🀡",
+      "suit": "dots",
+      "rank": 9,
+      "terminal": true,
+      "honor": false,
+      "simple": false
     }
   ],
   "hands": [],
