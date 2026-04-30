@@ -197,6 +197,17 @@
       "terminal": true,
       "honor": false,
       "simple": false
+    },
+    {
+      "tile": "bamboo-1",
+      "alias": "s1",
+      "compact": "1s",
+      "unicode": "🀐",
+      "suit": "bamboo",
+      "rank": 1,
+      "terminal": true,
+      "honor": false,
+      "simple": false
     }
   ],
   "hands": [],
