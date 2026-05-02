@@ -219,6 +219,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "bamboo-3",
+      "alias": "s3",
+      "compact": "3s",
+      "unicode": "🀒",
+      "suit": "bamboo",
+      "rank": 3,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
