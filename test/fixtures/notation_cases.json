@@ -230,6 +230,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "bamboo-4",
+      "alias": "s4",
+      "compact": "4s",
+      "unicode": "🀓",
+      "suit": "bamboo",
+      "rank": 4,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
