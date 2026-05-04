@@ -159,6 +159,12 @@ def count_tiles(hand: Iterable[str]) -> Counter[str]:
     return Counter(sort_hand(hand))
 
 
+def hand_key(hand: Iterable[str]) -> tuple[str, ...]:
+    """Return an order-independent key for stable-frame hand comparison."""
+
+    return tuple(sort_hand(hand))
+
+
 def parse_compact_hand(value: str | Iterable[str]) -> list[str]:
     """Parse compact, Unicode, or separated alias notation.
 
