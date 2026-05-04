@@ -241,6 +241,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "bamboo-5",
+      "alias": "s5",
+      "compact": "5s",
+      "unicode": "🀔",
+      "suit": "bamboo",
+      "rank": 5,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
