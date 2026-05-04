@@ -9,6 +9,7 @@ from ai.notation import (
     dora_from_indicators,
     format_compact_hand,
     format_unicode_hand,
+    hand_key,
     is_honor,
     is_simple,
     is_terminal,
@@ -102,3 +103,10 @@ def test_count_tiles_canonicalizes_aliases_and_drops_noise():
     counts = count_tiles(["m1", "characters-1", "east", "bogus"])
 
     assert counts == {"characters-1": 2, "honors-east": 1}
+
+
+def test_hand_key_is_independent_of_recognition_order():
+    left = hand_key(["east", "p3", "m1", "m1"])
+    right = hand_key(["characters-1", "m1", "dots-3", "honors-east"])
+
+    assert left == right
