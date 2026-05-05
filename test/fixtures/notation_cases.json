@@ -252,6 +252,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "bamboo-6",
+      "alias": "s6",
+      "compact": "6s",
+      "unicode": "🀕",
+      "suit": "bamboo",
+      "rank": 6,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
