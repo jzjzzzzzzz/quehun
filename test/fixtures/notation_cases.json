@@ -263,6 +263,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "bamboo-7",
+      "alias": "s7",
+      "compact": "7s",
+      "unicode": "🀖",
+      "suit": "bamboo",
+      "rank": 7,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
