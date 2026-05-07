@@ -274,6 +274,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "bamboo-8",
+      "alias": "s8",
+      "compact": "8s",
+      "unicode": "🀗",
+      "suit": "bamboo",
+      "rank": 8,
+      "terminal": false,
+      "honor": false,
+      "simple": true
     }
   ],
   "hands": [],
