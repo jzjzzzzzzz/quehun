@@ -285,6 +285,17 @@
       "terminal": false,
       "honor": false,
       "simple": true
+    },
+    {
+      "tile": "bamboo-9",
+      "alias": "s9",
+      "compact": "9s",
+      "unicode": "🀘",
+      "suit": "bamboo",
+      "rank": 9,
+      "terminal": true,
+      "honor": false,
+      "simple": false
     }
   ],
   "hands": [],
