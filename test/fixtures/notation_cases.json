@@ -296,6 +296,17 @@
       "terminal": true,
       "honor": false,
       "simple": false
+    },
+    {
+      "tile": "honors-east",
+      "alias": "east",
+      "compact": "1z",
+      "unicode": "U0001f000",
+      "suit": "honors",
+      "rank": null,
+      "terminal": false,
+      "honor": true,
+      "simple": false
     }
   ],
   "hands": [],
