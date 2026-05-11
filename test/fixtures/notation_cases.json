@@ -318,6 +318,17 @@
       "terminal": false,
       "honor": true,
       "simple": false
+    },
+    {
+      "tile": "honors-west",
+      "alias": "west",
+      "compact": "3z",
+      "unicode": "U0001f002",
+      "suit": "honors",
+      "rank": null,
+      "terminal": false,
+      "honor": true,
+      "simple": false
     }
   ],
   "hands": [],
