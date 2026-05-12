@@ -329,6 +329,17 @@
       "terminal": false,
       "honor": true,
       "simple": false
+    },
+    {
+      "tile": "honors-north",
+      "alias": "north",
+      "compact": "4z",
+      "unicode": "U0001f003",
+      "suit": "honors",
+      "rank": null,
+      "terminal": false,
+      "honor": true,
+      "simple": false
     }
   ],
   "hands": [],
