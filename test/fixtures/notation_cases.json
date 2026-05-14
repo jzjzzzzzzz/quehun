@@ -351,6 +351,17 @@
       "terminal": false,
       "honor": true,
       "simple": false
+    },
+    {
+      "tile": "honors-green",
+      "alias": "green",
+      "compact": "6z",
+      "unicode": "U0001f005",
+      "suit": "honors",
+      "rank": null,
+      "terminal": false,
+      "honor": true,
+      "simple": false
     }
   ],
   "hands": [],
