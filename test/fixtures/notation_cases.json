@@ -362,6 +362,17 @@
       "terminal": false,
       "honor": true,
       "simple": false
+    },
+    {
+      "tile": "honors-white",
+      "alias": "white",
+      "compact": "5z",
+      "unicode": "U0001f006",
+      "suit": "honors",
+      "rank": null,
+      "terminal": false,
+      "honor": true,
+      "simple": false
     }
   ],
   "hands": [],
