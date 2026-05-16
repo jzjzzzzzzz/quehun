@@ -38,13 +38,13 @@ UNICODE_TILES = {
     **{f"characters-{rank}": chr(0x1F006 + rank) for rank in range(1, 10)},
     **{f"bamboo-{rank}": chr(0x1F00F + rank) for rank in range(1, 10)},
     **{f"dots-{rank}": chr(0x1F018 + rank) for rank in range(1, 10)},
-    "honors-east": "U0001f000",
-    "honors-south": "U0001f001",
-    "honors-west": "U0001f002",
-    "honors-north": "U0001f003",
-    "honors-red": "U0001f004",
-    "honors-green": "U0001f005",
-    "honors-white": "U0001f006",
+    "honors-east": chr(0x1F000),
+    "honors-south": chr(0x1F001),
+    "honors-west": chr(0x1F002),
+    "honors-north": chr(0x1F003),
+    "honors-red": chr(0x1F004),
+    "honors-green": chr(0x1F005),
+    "honors-white": chr(0x1F006),
 }
 UNICODE_TO_TILE = {symbol: tile for tile, symbol in UNICODE_TILES.items()}
 
