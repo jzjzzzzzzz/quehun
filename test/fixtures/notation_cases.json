@@ -397,6 +397,26 @@
       ],
       "formatted": "123m456p789s12344z",
       "roundtrip": true
+    },
+    {
+      "name": "separated_compact_groups",
+      "notation": "123m 456p 789s 11z",
+      "tiles": [
+        "characters-1",
+        "characters-2",
+        "characters-3",
+        "dots-4",
+        "dots-5",
+        "dots-6",
+        "bamboo-7",
+        "bamboo-8",
+        "bamboo-9",
+        "honors-east",
+        "honors-east"
+      ],
+      "formatted": "123m456p789s11z",
+      "sort": true,
+      "roundtrip": true
     }
   ],
   "invalid": [],
