@@ -17,6 +17,8 @@ from ai.notation import (
     parse_compact_hand,
     sort_hand,
     summarize_hand,
+    tile_distance,
+    tile_neighbors,
     tile_rank,
     tile_suit,
     validate_hand,
@@ -110,3 +112,11 @@ def test_hand_key_is_independent_of_recognition_order():
     right = hand_key(["characters-1", "m1", "dots-3", "honors-east"])
 
     assert left == right
+
+
+def test_suited_neighbors_respect_edges_and_distance():
+    assert tile_neighbors("m1") == ("characters-2", "characters-3")
+    assert tile_neighbors("p5", distance=1) == ("dots-4", "dots-6")
+    assert tile_neighbors("east") == ()
+    assert tile_distance("s2", "bamboo-5") == 3
+    assert tile_distance("m2", "p2") is None
