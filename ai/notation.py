@@ -137,6 +137,21 @@ def tile_distance(left: str, right: str) -> int | None:
     return abs(tile_rank(left) - tile_rank(right))
 
 
+def tile_neighbors(tile: str, *, distance: int = 2) -> tuple[str, ...]:
+    """Return suited neighbors within ``distance`` ranks, excluding the tile."""
+
+    suit = tile_suit(tile)
+    rank = tile_rank(tile)
+    if rank is None or suit not in {"characters", "dots", "bamboo"}:
+        return ()
+    limit = max(0, int(distance))
+    return tuple(
+        f"{suit}-{candidate}"
+        for candidate in range(max(1, rank - limit), min(9, rank + limit) + 1)
+        if candidate != rank
+    )
+
+
 def tile_sort_key(tile: str) -> tuple[int, int]:
     """Return a deterministic Japanese-mahjong display order key."""
 
