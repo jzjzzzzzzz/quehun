@@ -417,6 +417,20 @@
       "formatted": "123m456p789s11z",
       "sort": true,
       "roundtrip": true
+    },
+    {
+      "name": "comma_separated_aliases",
+      "notation": "m1, m2, m3, east, red",
+      "tiles": [
+        "characters-1",
+        "characters-2",
+        "characters-3",
+        "honors-east",
+        "honors-red"
+      ],
+      "formatted": "123m17z",
+      "sort": true,
+      "roundtrip": true
     }
   ],
   "invalid": [],
