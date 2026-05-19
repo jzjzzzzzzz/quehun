@@ -431,6 +431,18 @@
       "formatted": "123m17z",
       "sort": true,
       "roundtrip": true
+    },
+    {
+      "name": "red_fives_normalize",
+      "notation": "0m0p0s",
+      "tiles": [
+        "characters-5",
+        "dots-5",
+        "bamboo-5"
+      ],
+      "formatted": "5m5p5s",
+      "sort": true,
+      "roundtrip": true
     }
   ],
   "invalid": [],
