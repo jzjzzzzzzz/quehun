@@ -443,6 +443,21 @@
       "formatted": "5m5p5s",
       "sort": true,
       "roundtrip": true
+    },
+    {
+      "name": "unsorted_digits_sort",
+      "notation": "987m321p",
+      "tiles": [
+        "characters-9",
+        "characters-8",
+        "characters-7",
+        "dots-3",
+        "dots-2",
+        "dots-1"
+      ],
+      "formatted": "789m123p",
+      "sort": true,
+      "roundtrip": true
     }
   ],
   "invalid": [],
