@@ -458,6 +458,21 @@
       "formatted": "789m123p",
       "sort": true,
       "roundtrip": true
+    },
+    {
+      "name": "preserve_group_digit_order",
+      "notation": "321m987p",
+      "tiles": [
+        "characters-3",
+        "characters-2",
+        "characters-1",
+        "dots-9",
+        "dots-8",
+        "dots-7"
+      ],
+      "formatted": "321m987p",
+      "sort": false,
+      "roundtrip": false
     }
   ],
   "invalid": [],
