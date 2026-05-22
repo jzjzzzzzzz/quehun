@@ -473,6 +473,19 @@
       "formatted": "321m987p",
       "sort": false,
       "roundtrip": false
+    },
+    {
+      "name": "unicode_hand",
+      "notation": "🀇🀈🀉🀀",
+      "tiles": [
+        "characters-1",
+        "characters-2",
+        "characters-3",
+        "honors-east"
+      ],
+      "formatted": "123m1z",
+      "sort": true,
+      "roundtrip": true
     }
   ],
   "invalid": [],
