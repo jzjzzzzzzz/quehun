@@ -486,6 +486,22 @@
       "formatted": "123m1z",
       "sort": true,
       "roundtrip": true
+    },
+    {
+      "name": "iterable_aliases",
+      "notation": [
+        "m1",
+        "p2",
+        "east"
+      ],
+      "tiles": [
+        "characters-1",
+        "dots-2",
+        "honors-east"
+      ],
+      "formatted": "1m2p1z",
+      "sort": true,
+      "roundtrip": true
     }
   ],
   "invalid": [],
