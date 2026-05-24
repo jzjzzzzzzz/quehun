@@ -502,6 +502,19 @@
       "formatted": "1m2p1z",
       "sort": true,
       "roundtrip": true
+    },
+    {
+      "name": "repeated_suit_groups",
+      "notation": "12m34m",
+      "tiles": [
+        "characters-1",
+        "characters-2",
+        "characters-3",
+        "characters-4"
+      ],
+      "formatted": "1234m",
+      "sort": true,
+      "roundtrip": true
     }
   ],
   "invalid": [],
