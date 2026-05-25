@@ -515,6 +515,21 @@
       "formatted": "1234m",
       "sort": true,
       "roundtrip": true
+    },
+    {
+      "name": "uppercase_suffixes",
+      "notation": "123M456P",
+      "tiles": [
+        "characters-1",
+        "characters-2",
+        "characters-3",
+        "dots-4",
+        "dots-5",
+        "dots-6"
+      ],
+      "formatted": "123m456p",
+      "sort": true,
+      "roundtrip": true
     }
   ],
   "invalid": [],
