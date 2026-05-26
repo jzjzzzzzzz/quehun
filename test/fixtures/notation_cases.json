@@ -532,7 +532,13 @@
       "roundtrip": true
     }
   ],
-  "invalid": [],
+  "invalid": [
+    {
+      "name": "honor_digit_out_of_range",
+      "notation": "8z",
+      "match": "honor digit"
+    }
+  ],
   "dora": [],
   "validation": []
 }
