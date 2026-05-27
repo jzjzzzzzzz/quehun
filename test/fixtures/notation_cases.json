@@ -537,6 +537,11 @@
       "name": "honor_digit_out_of_range",
       "notation": "8z",
       "match": "honor digit"
+    },
+    {
+      "name": "unknown_suit_suffix",
+      "notation": "123q",
+      "match": "invalid hand notation"
     }
   ],
   "dora": [],
