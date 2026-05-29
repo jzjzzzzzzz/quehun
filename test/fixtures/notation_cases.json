@@ -547,6 +547,11 @@
       "name": "suffix_before_digits",
       "notation": "m123",
       "match": "invalid hand notation"
+    },
+    {
+      "name": "missing_suit_suffix",
+      "notation": "123",
+      "match": "invalid hand notation"
     }
   ],
   "dora": [],
