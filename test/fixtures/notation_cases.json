@@ -552,6 +552,11 @@
       "name": "missing_suit_suffix",
       "notation": "123",
       "match": "invalid hand notation"
+    },
+    {
+      "name": "trailing_punctuation",
+      "notation": "1m?",
+      "match": "invalid hand notation"
     }
   ],
   "dora": [],
