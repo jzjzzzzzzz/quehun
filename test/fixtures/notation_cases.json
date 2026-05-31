@@ -557,6 +557,11 @@
       "name": "trailing_punctuation",
       "notation": "1m?",
       "match": "invalid hand notation"
+    },
+    {
+      "name": "mixed_unicode_and_compact",
+      "notation": "🀇1m",
+      "match": "invalid notation near"
     }
   ],
   "dora": [],
