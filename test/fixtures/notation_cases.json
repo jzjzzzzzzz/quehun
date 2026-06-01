@@ -562,6 +562,11 @@
       "name": "mixed_unicode_and_compact",
       "notation": "🀇1m",
       "match": "invalid notation near"
+    },
+    {
+      "name": "unknown_alias",
+      "notation": "m1, nope",
+      "match": "invalid hand notation"
     }
   ],
   "dora": [],
