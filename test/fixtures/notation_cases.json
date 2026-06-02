@@ -567,6 +567,14 @@
       "name": "unknown_alias",
       "notation": "m1, nope",
       "match": "invalid hand notation"
+    },
+    {
+      "name": "invalid_iterable_member",
+      "notation": [
+        "m1",
+        "bogus"
+      ],
+      "match": "unknown tile"
     }
   ],
   "dora": [],
