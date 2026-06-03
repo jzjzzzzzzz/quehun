@@ -577,6 +577,12 @@
       "match": "unknown tile"
     }
   ],
-  "dora": [],
+  "dora": [
+    {
+      "name": "characters_wrap",
+      "indicator": "m9",
+      "dora": "characters-1"
+    }
+  ],
   "validation": []
 }
