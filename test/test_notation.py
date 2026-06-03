@@ -120,3 +120,11 @@ def test_suited_neighbors_respect_edges_and_distance():
     assert tile_neighbors("east") == ()
     assert tile_distance("s2", "bamboo-5") == 3
     assert tile_distance("m2", "p2") is None
+
+
+def test_unicode_formatter_separator_roundtrip():
+    tiles = parse_compact_hand("123m1z")
+    rendered = format_unicode_hand(tiles, separator=" ")
+
+    assert rendered.count(" ") == 3
+    assert parse_compact_hand(rendered) == tiles
