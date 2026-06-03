@@ -128,3 +128,14 @@ def test_unicode_formatter_separator_roundtrip():
 
     assert rendered.count(" ") == 3
     assert parse_compact_hand(rendered) == tiles
+
+
+def test_dora_batch_filters_unknown_indicators_and_preserves_order():
+    indicators = ["m9", "bogus", "north", "red"]
+
+    assert next_dora("bogus") is None
+    assert dora_from_indicators(indicators) == [
+        "characters-1",
+        "honors-east",
+        "honors-white",
+    ]
