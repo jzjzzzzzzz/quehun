@@ -582,6 +582,11 @@
       "name": "characters_wrap",
       "indicator": "m9",
       "dora": "characters-1"
+    },
+    {
+      "name": "dots_advance",
+      "indicator": "p4",
+      "dora": "dots-5"
     }
   ],
   "validation": []
