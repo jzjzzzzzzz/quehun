@@ -587,6 +587,11 @@
       "name": "dots_advance",
       "indicator": "p4",
       "dora": "dots-5"
+    },
+    {
+      "name": "bamboo_wrap",
+      "indicator": "s9",
+      "dora": "bamboo-1"
     }
   ],
   "validation": []
