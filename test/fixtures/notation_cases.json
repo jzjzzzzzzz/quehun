@@ -592,6 +592,11 @@
       "name": "bamboo_wrap",
       "indicator": "s9",
       "dora": "bamboo-1"
+    },
+    {
+      "name": "wind_advance",
+      "indicator": "east",
+      "dora": "honors-south"
     }
   ],
   "validation": []
