@@ -597,6 +597,11 @@
       "name": "wind_advance",
       "indicator": "east",
       "dora": "honors-south"
+    },
+    {
+      "name": "wind_wrap",
+      "indicator": "north",
+      "dora": "honors-east"
     }
   ],
   "validation": []
