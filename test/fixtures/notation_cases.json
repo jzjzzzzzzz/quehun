@@ -602,6 +602,11 @@
       "name": "wind_wrap",
       "indicator": "north",
       "dora": "honors-east"
+    },
+    {
+      "name": "dragon_advance",
+      "indicator": "white",
+      "dora": "honors-green"
     }
   ],
   "validation": []
