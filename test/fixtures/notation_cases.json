@@ -607,6 +607,11 @@
       "name": "dragon_advance",
       "indicator": "white",
       "dora": "honors-green"
+    },
+    {
+      "name": "dragon_wrap",
+      "indicator": "red",
+      "dora": "honors-white"
     }
   ],
   "validation": []
