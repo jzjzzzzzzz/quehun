@@ -153,3 +153,13 @@ def test_summary_reports_suit_honor_and_terminal_totals():
     assert summary.honors == 3
     assert summary.terminals == 3
     assert summary.pairs == ("dots-5", "honors-east")
+
+
+def test_empty_notation_helpers_have_neutral_results():
+    assert parse_compact_hand("") == []
+    assert format_compact_hand([]) == ""
+    assert format_unicode_hand([]) == ""
+    assert dora_from_indicators([]) == []
+    assert count_tiles([]) == {}
+    assert summarize_hand([]).total == 0
+    assert validate_hand([], expected_sizes=None).valid
