@@ -614,5 +614,27 @@
       "dora": "honors-white"
     }
   ],
-  "validation": []
+  "validation": [
+    {
+      "name": "legal_thirteen_tiles",
+      "tiles": [
+        "m1",
+        "m2",
+        "m3",
+        "p1",
+        "p2",
+        "p3",
+        "s1",
+        "s2",
+        "s3",
+        "east",
+        "east",
+        "red",
+        "red"
+      ],
+      "valid": true,
+      "error_count": 0,
+      "warning_count": 0
+    }
+  ]
 }
