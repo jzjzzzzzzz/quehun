@@ -139,3 +139,17 @@ def test_dora_batch_filters_unknown_indicators_and_preserves_order():
         "honors-east",
         "honors-white",
     ]
+
+
+def test_summary_reports_suit_honor_and_terminal_totals():
+    summary = summarize_hand(parse_compact_hand("19m55p123s117z"))
+
+    assert summary.suits == {
+        "characters": 2,
+        "dots": 2,
+        "bamboo": 3,
+        "honors": 3,
+    }
+    assert summary.honors == 3
+    assert summary.terminals == 3
+    assert summary.pairs == ("dots-5", "honors-east")
