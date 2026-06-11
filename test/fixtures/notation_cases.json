@@ -635,6 +635,28 @@
       "valid": true,
       "error_count": 0,
       "warning_count": 0
+    },
+    {
+      "name": "legal_low_diversity_hand",
+      "tiles": [
+        "m1",
+        "m1",
+        "m1",
+        "m1",
+        "m2",
+        "m2",
+        "m2",
+        "m2",
+        "m3",
+        "m3",
+        "m3",
+        "m3",
+        "m4",
+        "m4"
+      ],
+      "valid": true,
+      "error_count": 0,
+      "warning_count": 1
     }
   ]
 }
