@@ -163,3 +163,11 @@ def test_empty_notation_helpers_have_neutral_results():
     assert count_tiles([]) == {}
     assert summarize_hand([]).total == 0
     assert validate_hand([], expected_sizes=None).valid
+
+
+def test_validation_returns_canonical_tiles_for_alias_input():
+    result = validate_hand(["m1", "characters-2", "east"], expected_sizes=None)
+
+    assert result.valid
+    assert result.tiles == ("characters-1", "characters-2", "honors-east")
+    assert result.errors == ()
