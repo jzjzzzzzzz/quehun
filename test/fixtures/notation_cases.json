@@ -670,6 +670,16 @@
       "expected_sizes": null,
       "valid": false,
       "error_count": 1
+    },
+    {
+      "name": "unknown_tile_name",
+      "tiles": [
+        "m1",
+        "plum"
+      ],
+      "expected_sizes": null,
+      "valid": false,
+      "error_count": 1
     }
   ]
 }
