@@ -1,0 +1,71 @@
+{
+  "reference_size": {
+    "width": 1920,
+    "height": 1080
+  },
+  "regions": {
+    "hand": {
+      "left": 284,
+      "top": 883,
+      "width": 1247,
+      "height": 137
+    },
+    "discards_self": {
+      "left": 782,
+      "top": 535,
+      "width": 350,
+      "height": 135,
+      "rows": 2,
+      "columns": 6,
+      "rotation": 0
+    },
+    "discards_opposite": {
+      "left": 812,
+      "top": 216,
+      "width": 300,
+      "height": 105,
+      "rows": 2,
+      "columns": 6,
+      "rotation": 180
+    },
+    "discards_left": {
+      "left": 648,
+      "top": 300,
+      "width": 145,
+      "height": 240,
+      "rows": 2,
+      "columns": 6,
+      "rotation": 90
+    },
+    "discards_right": {
+      "left": 1127,
+      "top": 300,
+      "width": 145,
+      "height": 240,
+      "rows": 2,
+      "columns": 6,
+      "rotation": 270
+    },
+    "dora_indicators": {
+      "left": 28,
+      "top": 79,
+      "width": 250,
+      "height": 78,
+      "rows": 1,
+      "columns": 5,
+      "rotation": 0
+    },
+    "round_text": {
+      "left": 875,
+      "top": 350,
+      "width": 170,
+      "height": 105
+    },
+    "actions": {
+      "left": 820,
+      "top": 700,
+      "width": 650,
+      "height": 180
+    }
+  }
+}

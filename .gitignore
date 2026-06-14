@@ -1,0 +1,19 @@
+.venv/
+.idea/
+.tmp/
+debug/
+__pycache__/
+*.py[cod]
+*.log
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local editor and OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Generated model/training outputs
+checkpoints/
+runs/

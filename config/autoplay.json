@@ -1,0 +1,99 @@
+{
+  "window_title": "\u96c0\u9b42",
+  "window_title_exact": false,
+  "window_title_fallbacks": [
+    "\u96c0\u9b42\u9ebb\u5c07",
+    "MahjongSoul",
+    "Mahjong Soul"
+  ],
+  "region_mode": "window",
+  "window_required": false,
+  "focus_window": false,
+  "focus_delay": 0.2,
+  "focus_retries": 2,
+  "hand_region": {
+    "left": 284,
+    "top": 883,
+    "width": 1247,
+    "height": 137
+  },
+  "hand_reference_size": {
+    "width": 1920,
+    "height": 1080
+  },
+  "tile_slots": 14,
+  "tile_count": 14,
+  "actionable_tile_counts": [
+    14
+  ],
+  "waiting_tile_counts": [
+    13
+  ],
+  "stable_frames": 2,
+  "click_cooldown": 1.2,
+  "analysis": {
+    "debug": false,
+    "debug_dir": "debug/screenshots",
+    "tile_debug_dir": "debug/tiles/latest",
+    "max_debug_screenshots": 50,
+    "ocr_enabled": true,
+    "low_confidence_warning": 0.65,
+    "error_backoff": 1.0
+  },
+  "click": {
+    "enabled": false,
+    "min_confidence": 0.82,
+    "require_in_game": true,
+    "require_foreground": true,
+    "y_offset_ratio": 0.5,
+    "repeat": 1,
+    "repeat_delay": 0.15
+  },
+  "discard_confirm": {
+    "enabled": false,
+    "delay": 0.2,
+    "region": {
+      "left": 1390,
+      "top": 730,
+      "width": 145,
+      "height": 110
+    }
+  },
+  "auto_click_bonus": false,
+  "auto_pass": false,
+  "action_prompt": {
+    "enabled": false,
+    "detect_regions": [
+      "chi",
+      "pass"
+    ],
+    "edge_threshold": 0.05,
+    "stable_frames": 1,
+    "default_action": "pass"
+  },
+  "action_policy": {
+    "enabled": false,
+    "allowed_actions": [
+      "pass"
+    ],
+    "min_confidence": 0.8,
+    "stable_frames": 2
+  },
+  "action_regions": {
+    "chi": {
+      "left": 900,
+      "top": 760,
+      "width": 230,
+      "height": 95
+    },
+    "pass": {
+      "left": 1170,
+      "top": 760,
+      "width": 220,
+      "height": 95
+    }
+  },
+  "min_confidence": 0.25,
+  "max_low_confidence_tiles": 0,
+  "delay": 1.0
+}
