@@ -3,7 +3,7 @@ import sys
 import time
 
 from capture.screen import capture_screen
-from capture.screen import save_screenshot
+from capture.screen import save_screenshot, save_window_screenshot as save_hwnd_screenshot
 from capture.windows_api import find_window, list_windows
 from cv.calibration import DEFAULT_DEBUG_DIR, DEFAULT_OUTPUT_DIR
 from cv.calibration import learn_debug_tiles, parse_labels
@@ -191,13 +191,7 @@ def save_window_screenshot(path, title):
     window = find_window(title)
     if window is None:
         raise RuntimeError(f"Could not find window containing title: {title!r}")
-    region = {
-        "left": window["left"],
-        "top": window["top"],
-        "width": window["width"],
-        "height": window["height"],
-    }
-    save_screenshot(path, region=region)
+    save_hwnd_screenshot(path, window["hwnd"])
     print(f"Saved window screenshot: {path}")
 
 

@@ -109,6 +109,98 @@ def capture_screen_gdi(region=None):
         user32.ReleaseDC(hdesktop, hdc)
 
 
+def capture_window(hwnd):
+    """Capture a specific Windows HWND even when another window overlaps it."""
+    import ctypes
+    from ctypes import wintypes
+
+    import cv2
+    import numpy as np
+
+    user32 = ctypes.windll.user32
+    gdi32 = ctypes.windll.gdi32
+    handle = wintypes.HWND(int(hwnd))
+    if not user32.IsWindow(handle):
+        raise RuntimeError(f"Invalid window handle: {hwnd}")
+
+    rect = wintypes.RECT()
+    if not user32.GetWindowRect(handle, ctypes.byref(rect)):
+        raise ctypes.WinError()
+    width = rect.right - rect.left
+    height = rect.bottom - rect.top
+    if width <= 0 or height <= 0:
+        raise RuntimeError(f"Window has invalid dimensions: {width}x{height}")
+
+    window_dc = user32.GetWindowDC(handle)
+    memory_dc = gdi32.CreateCompatibleDC(window_dc)
+    bitmap = gdi32.CreateCompatibleBitmap(window_dc, width, height)
+    old_object = gdi32.SelectObject(memory_dc, bitmap)
+
+    try:
+        printed = user32.PrintWindow(handle, memory_dc, 0x00000002)
+        if not printed:
+            printed = gdi32.BitBlt(
+                memory_dc,
+                0,
+                0,
+                width,
+                height,
+                window_dc,
+                0,
+                0,
+                0x00CC0020,
+            )
+        if not printed:
+            raise RuntimeError("Windows PrintWindow/BitBlt capture failed.")
+
+        class BitmapInfoHeader(ctypes.Structure):
+            _fields_ = [
+                ("biSize", ctypes.c_uint32),
+                ("biWidth", ctypes.c_int32),
+                ("biHeight", ctypes.c_int32),
+                ("biPlanes", ctypes.c_uint16),
+                ("biBitCount", ctypes.c_uint16),
+                ("biCompression", ctypes.c_uint32),
+                ("biSizeImage", ctypes.c_uint32),
+                ("biXPelsPerMeter", ctypes.c_int32),
+                ("biYPelsPerMeter", ctypes.c_int32),
+                ("biClrUsed", ctypes.c_uint32),
+                ("biClrImportant", ctypes.c_uint32),
+            ]
+
+        class BitmapInfo(ctypes.Structure):
+            _fields_ = [
+                ("bmiHeader", BitmapInfoHeader),
+                ("bmiColors", ctypes.c_uint32 * 3),
+            ]
+
+        bitmap_info = BitmapInfo()
+        bitmap_info.bmiHeader.biSize = ctypes.sizeof(BitmapInfoHeader)
+        bitmap_info.bmiHeader.biWidth = width
+        bitmap_info.bmiHeader.biHeight = -height
+        bitmap_info.bmiHeader.biPlanes = 1
+        bitmap_info.bmiHeader.biBitCount = 32
+        buffer = ctypes.create_string_buffer(width * height * 4)
+        lines = gdi32.GetDIBits(
+            memory_dc,
+            bitmap,
+            0,
+            height,
+            buffer,
+            ctypes.byref(bitmap_info),
+            0,
+        )
+        if lines != height:
+            raise RuntimeError("Windows GetDIBits window capture failed.")
+        image = np.frombuffer(buffer, dtype=np.uint8).reshape((height, width, 4))
+        return cv2.cvtColor(image, cv2.COLOR_BGRA2BGR)
+    finally:
+        gdi32.SelectObject(memory_dc, old_object)
+        gdi32.DeleteObject(bitmap)
+        gdi32.DeleteDC(memory_dc)
+        user32.ReleaseDC(handle, window_dc)
+
+
 def save_screenshot(path, region=None):
     try:
         import cv2
@@ -120,6 +212,17 @@ def save_screenshot(path, region=None):
     os.makedirs(directory, exist_ok=True)
     if not cv2.imwrite(path, frame):
         raise RuntimeError(f"Could not save screenshot: {path}")
+    return path
+
+
+def save_window_screenshot(path, hwnd):
+    import cv2
+
+    directory = os.path.dirname(os.path.abspath(path))
+    os.makedirs(directory, exist_ok=True)
+    frame = capture_window(hwnd)
+    if not cv2.imwrite(path, frame):
+        raise RuntimeError(f"Could not save window screenshot: {path}")
     return path
 
 

@@ -88,8 +88,9 @@ class QueHunScreenStateDetector:
     )
     LOADING_WORDS = ("loading", "connecting", "加载", "连接中")
 
-    def __init__(self, ocr=None):
+    def __init__(self, ocr=None, templates_dir="templates/screens"):
         self.ocr = ocr or OCRReader()
+        self.templates = self._load_templates(templates_dir)
 
     def detect(self, frame, hand_region=None):
         if frame is None or not hasattr(frame, "shape") or frame.size == 0:
@@ -108,6 +109,12 @@ class QueHunScreenStateDetector:
             ScreenState.LOADING: self._keyword_score(normalized, self.LOADING_WORDS),
         }
         reasons = []
+        template_state, template_score = self._template_state(frame)
+        if template_state is not None:
+            scores[template_state] += template_score * 0.75
+            reasons.append(
+                f"screen template {template_state.value} {template_score:.2f}"
+            )
 
         edge_density = self._edge_density(frame)
         color_variance = float(np.std(cv2.resize(frame, (64, 36)))) / 128.0
@@ -139,6 +146,50 @@ class QueHunScreenStateDetector:
             reasons=reasons,
             ocr_available=self.ocr.available,
         )
+
+    @staticmethod
+    def _load_templates(directory):
+        templates = {}
+        path = Path(directory)
+        if not path.is_dir():
+            return templates
+        mapping = {
+            "room_creation": ScreenState.ROOM_CREATION,
+            "in_game": ScreenState.IN_GAME,
+            "loading": ScreenState.LOADING,
+        }
+        for image_path in path.iterdir():
+            state = mapping.get(image_path.stem.lower())
+            if state is None:
+                continue
+            image = cv2.imread(str(image_path))
+            if image is not None:
+                templates[state] = image
+        return templates
+
+    def _template_state(self, frame):
+        if not self.templates:
+            return None, 0.0
+        sample = self._screen_feature(frame)
+        best_state = None
+        best_score = 0.0
+        for state, template in self.templates.items():
+            feature = self._screen_feature(template)
+            score = float(cv2.compareHist(sample, feature, cv2.HISTCMP_CORREL))
+            score = max(0.0, min(1.0, score))
+            if score > best_score:
+                best_state = state
+                best_score = score
+        if best_score < 0.55:
+            return None, best_score
+        return best_state, best_score
+
+    @staticmethod
+    def _screen_feature(frame):
+        resized = cv2.resize(frame, (160, 90), interpolation=cv2.INTER_AREA)
+        hsv = cv2.cvtColor(resized, cv2.COLOR_BGR2HSV)
+        histogram = cv2.calcHist([hsv], [0, 1], None, [24, 16], [0, 180, 0, 256])
+        return cv2.normalize(histogram, histogram).flatten().astype(np.float32)
 
     @staticmethod
     def _keyword_score(text, words):

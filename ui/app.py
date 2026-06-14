@@ -67,6 +67,9 @@ class QueHunApp(tk.Tk):
         self.cooldown_var = tk.StringVar(value=str(self.config.get("click_cooldown", 1.2)))
         self.debug_var = tk.BooleanVar(value=analysis.get("debug", False))
         self.auto_click_var = tk.BooleanVar(value=False)
+        self.auto_pass_var = tk.BooleanVar(
+            value=self.config.get("action_policy", {}).get("enabled", False)
+        )
         self.calibration_target_var = tk.StringVar(value="hand")
         self.status_var = tk.StringVar(value="Waiting")
         self.screen_state_var = tk.StringVar(value="unknown")
@@ -144,6 +147,11 @@ class QueHunApp(tk.Tk):
             controls,
             text="启用自动出牌点击",
             variable=self.auto_click_var,
+        ).pack(side="left", padx=6)
+        ttk.Checkbutton(
+            controls,
+            text="自动点击跳过",
+            variable=self.auto_pass_var,
         ).pack(side="left", padx=6)
 
         body = ttk.Panedwindow(self, orient="horizontal")
@@ -314,6 +322,9 @@ class QueHunApp(tk.Tk):
         config["click_cooldown"] = max(0.0, float(self.cooldown_var.get()))
         config.setdefault("analysis", {})["debug"] = bool(self.debug_var.get())
         config.setdefault("click", {})["enabled"] = False
+        action_policy = config.setdefault("action_policy", {})
+        action_policy["enabled"] = bool(self.auto_pass_var.get())
+        action_policy["allowed_actions"] = ["pass"]
         return config
 
     def save_settings(self, quiet=False):

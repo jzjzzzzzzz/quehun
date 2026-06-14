@@ -3,7 +3,7 @@ from collections import Counter
 
 from ai.advisor import analyze_hand
 from ai.tile_set import canonical_hand
-from capture.screen import ScreenCapture
+from capture.screen import ScreenCapture, capture_window
 from capture.windows_api import find_window, foreground_window
 from cv.real_hand_parser import RealHandParser
 from cv.game_regions import GameRegionRecognizer
@@ -208,7 +208,9 @@ class AnalysisController:
             return self._warning("window_not_found", "未找到雀魂窗口，等待下一帧")
 
         if frame is None:
-            frame = self.capture.grab(self._window_region(window), label="window")
+            frame = capture_window(window["hwnd"])
+            if self.capture.debug:
+                self.capture.save_debug(frame, label="window")
         elif self.capture.debug:
             self.capture.save_debug(frame, label="provided")
 
