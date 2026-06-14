@@ -33,6 +33,8 @@ This project has two working paths:
 - `cv/template_classifier.py` - Torch-free tile classifier using local dataset templates.
 - `cv/real_hand_parser.py` - parses a configured hand region into tiles.
 - `cv/screen_state.py` - OCR and visual page-state detection.
+- `cv/game_regions.py` - scalable river/dora/wind recognition and online river-template learning.
+- `cv/action_buttons.py` - visual action-button template detection.
 - `ai/advisor.py` - explainable top-three discard advice and danger interface.
 - `ai/engine.py` - discard decision.
 - `ai/agari.py`, `ai/shanten.py`, `ai/ukeire.py`, `ai/japanese_rules.py` - mahjong logic.
@@ -79,11 +81,14 @@ Enable real clicking only after dry-run recognition and click coordinates look c
 
 ## Known Limitations
 
-- Current-client tile templates still require calibration from real screenshots.
-- Riichi, ron, tsumo, pon, chi, kan, and pass regions vary by layout and require calibration.
+- Hand recognition has 122 real-client templates plus generic fallback for all 34 playable tiles.
+- River contours are detected and perspective templates learn automatically after reliable discards;
+  a fresh install needs observed transitions before all river labels are covered.
+- Real templates currently cover pon/pass and east round/seat markers. Chi, kan, riichi,
+  ron, tsumo, and south/west/north markers need one captured template each.
 - The current tile classifier is template/prototype based because this venv does not have `torch` or `torchvision`.
 - Project-local `tools/tessdata` contains English and Simplified Chinese OCR data.
-- Discard rivers, dora, winds, and turn metadata exist in GameState but are not fully recognized yet.
+- Stylized game text often requires visual templates even when OCR is installed.
 
 ## Verification Commands
 

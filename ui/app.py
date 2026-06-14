@@ -101,6 +101,7 @@ class QueHunApp(tk.Tk):
                 "hand",
                 "actions",
                 "round_text",
+                "seat_wind",
                 "dora_indicators",
                 "discards_self",
                 "discards_right",

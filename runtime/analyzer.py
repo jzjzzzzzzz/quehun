@@ -1,4 +1,5 @@
 import time
+from collections import Counter
 
 from ai.advisor import analyze_hand
 from ai.tile_set import canonical_hand
@@ -39,6 +40,9 @@ class AnalysisController:
         self.tracker = StateTracker(self.config.get("stable_frames", 2))
         self.last_click_at = 0.0
         self.last_clicked_hand = None
+        self.previous_hand = []
+        self.previous_confidence = 0.0
+        self.previous_self_discard_count = 0
         self.parser = RealHandParser(
             hand_region=self._frame_hand_region(None),
             tile_count=self.config.get("tile_slots", self.config.get("tile_count", 14)),
@@ -230,6 +234,11 @@ class AnalysisController:
         hand = self._recognized_hand(details)
         confidence = self._overall_confidence(details)
         stable = self.tracker.is_stable(hand) if hand else False
+        learned_discard_template = self._learn_discard_transition(
+            hand,
+            confidence,
+            region_state,
+        )
 
         self.game_state.update(
             hand,
@@ -247,6 +256,7 @@ class AnalysisController:
             discards=region_state["discards"],
             dora_indicators=region_state["dora_indicators"],
             round_wind=region_state["round_wind"],
+            seat_wind=region_state["seat_wind"],
             turn_info="discard" if len(hand) == 14 else "waiting",
             raw_debug_info={
                 "screen_state": state_result.state.value,
@@ -256,7 +266,10 @@ class AnalysisController:
                 "tile_details": details,
                 "region_details": region_state["raw"],
                 "round_text": region_state["round_text"],
+                "round_confidence": region_state["round_confidence"],
+                "seat_confidence": region_state["seat_confidence"],
                 "visible_actions": visible_actions,
+                "learned_discard_template": learned_discard_template,
                 "stable": stable,
             },
         )
@@ -326,7 +339,29 @@ class AnalysisController:
             "click": click,
             "click_reason": click_reason,
             "visible_actions": visible_actions,
+            "learned_discard_template": learned_discard_template,
         }
+
+    def _learn_discard_transition(self, hand, confidence, region_state):
+        self_count = len(
+            self.region_recognizer.last_discard_crops.get("self") or []
+        )
+        learned = None
+        if (
+            len(self.previous_hand) == 14
+            and len(hand) == 13
+            and self.previous_confidence >= 0.75
+            and confidence >= 0.75
+            and self_count > self.previous_self_discard_count
+        ):
+            removed = list((Counter(self.previous_hand) - Counter(hand)).elements())
+            if len(removed) == 1:
+                learned = self.region_recognizer.learn_self_discard(removed[0])
+        if hand:
+            self.previous_hand = list(hand)
+            self.previous_confidence = confidence
+        self.previous_self_discard_count = self_count
+        return learned
 
     @staticmethod
     def _warning(code, message):

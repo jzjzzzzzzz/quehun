@@ -53,3 +53,12 @@ Debug 截图后，将最新 14 个切片标注并导入：
 
 程序使用系统 Tesseract 可执行文件和项目内 `tools/tessdata` 中的中英文语言
 数据。没有 OCR 或单帧 OCR 失败时，程序使用视觉特征并继续下一帧。
+
+## Extended Recognition
+
+- `config/screen_regions.json` stores scalable regions for four discard rivers,
+  dora, round wind, seat wind, and action buttons.
+- The UI calibration selector can update any of these regions.
+- Round/seat wind and action buttons use visual templates when OCR is unsuitable.
+- River tiles learn perspective templates automatically after reliable 14-to-13
+  hand transitions.

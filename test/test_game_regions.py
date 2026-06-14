@@ -9,7 +9,13 @@ if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
 from cv.action_buttons import ActionButtonDetector
-from cv.game_regions import load_regions, scaled_region, update_region
+from cv.game_regions import (
+    ContourTileParser,
+    PerspectiveTileClassifier,
+    load_regions,
+    scaled_region,
+    update_region,
+)
 
 
 def test_scaled_region():
@@ -52,8 +58,23 @@ def test_real_action_templates():
     assert {"pon", "pass"} <= names
 
 
+def test_perspective_template_learning():
+    image_path = os.path.join(ROOT, ".tmp", "region-debug", "discards_self-0-0.png")
+    if not os.path.exists(image_path):
+        return
+    image = cv2.imread(image_path)
+    with tempfile.TemporaryDirectory() as directory:
+        classifier = PerspectiveTileClassifier(templates_dir=directory)
+        path = classifier.learn("m7", image)
+        result = classifier.classify(image)
+        assert path is not None
+        assert result["tile"] == "characters-7"
+        assert result["confidence"] == 1.0
+
+
 if __name__ == "__main__":
     test_scaled_region()
     test_update_region_preserves_grid_metadata()
     test_real_action_templates()
+    test_perspective_template_learning()
     print("Game region tests passed")
