@@ -3,6 +3,15 @@ from functools import lru_cache
 from ai.tile_set import PLAYABLE_TILES, canonical_hand
 
 
+THIRTEEN_ORPHANS = frozenset({
+    "characters-1", "characters-9",
+    "dots-1", "dots-9",
+    "bamboo-1", "bamboo-9",
+    "honors-east", "honors-south", "honors-west", "honors-north",
+    "honors-red", "honors-green", "honors-white",
+})
+
+
 def hand_counts(hand):
     counts = [0] * len(PLAYABLE_TILES)
     for tile in canonical_hand(hand):
@@ -65,8 +74,17 @@ def is_seven_pairs(hand):
     return sum(1 for count in counts if count == 2) == 7
 
 
+def is_thirteen_orphans(hand):
+    """Return whether a closed 14-tile hand is thirteen orphans."""
+
+    hand = canonical_hand(hand)
+    if len(hand) != 14 or set(hand) != THIRTEEN_ORPHANS:
+        return False
+    return any(hand.count(tile) == 2 for tile in THIRTEEN_ORPHANS)
+
+
 def is_win(hand):
-    return is_standard_win(hand) or is_seven_pairs(hand)
+    return is_standard_win(hand) or is_seven_pairs(hand) or is_thirteen_orphans(hand)
 
 
 def winning_tiles(hand, visible_tiles=None):
