@@ -1,6 +1,6 @@
 from collections import Counter
 
-from ai.agari import hand_counts, is_seven_pairs, is_standard_win, is_win
+from ai.agari import hand_counts, is_seven_pairs, is_standard_win, is_thirteen_orphans, is_win
 from ai.tile_set import PLAYABLE_TILES, canonical_hand
 
 
@@ -103,6 +103,9 @@ def yaku_for_win(hand, win_method="tsumo", seat_wind="east", round_wind="east", 
     if is_seven_pairs(hand):
         yaku.append("chiitoitsu")
 
+    if is_thirteen_orphans(hand):
+        yaku.append("kokushi_musou")
+
     pair, melds = decompose_standard_hand(hand)
     if melds:
         triplets = [tiles for kind, tiles in melds if kind == "triplet"]
@@ -140,6 +143,9 @@ def has_yaku(hand, **kwargs):
 def estimate_points(yaku, dealer=False, win_method="ron"):
     if not yaku:
         return 0
+
+    if "kokushi_musou" in yaku:
+        return 48000 if dealer else 32000
 
     han = 0
     for name in yaku:
