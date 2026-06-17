@@ -35,10 +35,14 @@ silently changing a hand.
 
 - `sort_hand()` returns canonical playable tiles in characters, dots, bamboo,
   then honors order.
+- `hand_key()` creates an order-independent tuple for duplicate/stable-frame
+  checks, while `count_tiles()` returns canonical physical-copy counts.
 - `format_compact_hand()` groups a hand by suit.
 - `format_unicode_hand()` is suitable for diagnostics and text-only previews.
 - `tile_suit()`, `tile_rank()`, and the tile predicates expose metadata without
   duplicating string parsing in callers.
+- `tile_neighbors()` and `tile_distance()` expose bounded same-suit structure
+  for explainable shape heuristics.
 
 ## Dora indicators
 
@@ -71,3 +75,10 @@ the advisor.
 
 The data-driven contracts in `test/fixtures/notation_cases.json` cover every
 playable tile, mixed hands, invalid inputs, dora cycles, and hand validation.
+
+## Agari coverage
+
+The agari detector supports standard four-meld-and-pair hands, seven pairs,
+and thirteen orphans. Thirteen-orphans waits are included by `winning_tiles()`,
+and the simplified Japanese-rules layer reports `kokushi_musou` with yakuman
+base points.
