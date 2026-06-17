@@ -84,3 +84,8 @@ def test_summary_counts_unique_shapes_once():
         "characters-3",
         "honors-north",
     )
+
+
+def test_bonus_tile_is_not_accepted_as_a_playable_hand_tile():
+    with pytest.raises(NotationError, match="unknown tile"):
+        parse_compact_hand(["spring"])

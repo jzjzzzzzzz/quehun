@@ -165,7 +165,7 @@ def parse_compact_hand(value: str | Iterable[str]) -> list[str]:
     if not isinstance(value, str):
         raw_tiles = list(value or [])
         parsed = [canonical_tile(tile) for tile in raw_tiles]
-        if any(tile is None for tile in parsed):
+        if any(tile not in PLAYABLE_TILES for tile in parsed):
             raise NotationError("tile list contains an unknown tile")
         return parsed
 

@@ -91,3 +91,13 @@ Debug 截图后，将最新 14 个切片标注并导入：
 - Round/seat wind and action buttons use visual templates when OCR is unsuitable.
 - River tiles learn perspective templates automatically after reliable 14-to-13
   hand transitions.
+
+## Tile notation utilities
+
+`ai.notation` converts compact input such as `123m456p789s12344z`, separated
+aliases, and Unicode Mahjong Tile symbols into the canonical names consumed by
+the analyzer. It also provides deterministic sorting, Unicode/compact output,
+dora-indicator conversion, hand summaries, and physical-copy validation.
+
+See [`docs/mahjong_notation.md`](docs/mahjong_notation.md) for the supported
+grammar and API examples.
