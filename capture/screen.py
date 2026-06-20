@@ -1,9 +1,18 @@
 import os
+import subprocess
 import time
 from pathlib import Path
+from tempfile import NamedTemporaryFile
+
+
+def _is_macos():
+    return os.sys.platform == "darwin"
 
 
 def capture_screen(region=None):
+    if _is_macos():
+        return capture_screen_macos(region=region)
+
     try:
         import cv2
         import numpy as np
@@ -31,6 +40,45 @@ def capture_screen(region=None):
                 "session with the game visible, or use --auto-play-image with a screenshot."
             ) from gdi_exc
     return cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
+
+def capture_screen_macos(region=None):
+    import cv2
+    import numpy as np
+    from PIL import Image
+
+    with NamedTemporaryFile(suffix=".png", delete=False) as tmp:
+        path = tmp.name
+    command = ["screencapture", "-x"]
+    if region:
+        left = int(region["left"])
+        top = int(region["top"])
+        width = int(region["width"])
+        height = int(region["height"])
+        command.extend(["-R", f"{left},{top},{width},{height}"])
+    command.append(path)
+    try:
+        completed = subprocess.run(
+            command,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=10,
+        )
+        if completed.returncode != 0 or not os.path.exists(path):
+            message = completed.stderr.strip() or completed.stdout.strip()
+            raise RuntimeError(
+                "macOS screen capture failed. Grant Screen Recording permission "
+                "to Terminal, Python, or your IDE in System Settings > Privacy & Security. "
+                f"Details: {message or 'no image was created'}"
+            )
+        image = np.array(Image.open(path).convert("RGB"))
+        return cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+    finally:
+        try:
+            os.remove(path)
+        except OSError:
+            pass
 
 
 def capture_screen_gdi(region=None):
@@ -111,6 +159,9 @@ def capture_screen_gdi(region=None):
 
 def capture_window(hwnd):
     """Capture a specific Windows HWND even when another window overlaps it."""
+    if _is_macos():
+        raise RuntimeError("macOS window capture needs a window region, not an HWND.")
+
     import ctypes
     from ctypes import wintypes
 

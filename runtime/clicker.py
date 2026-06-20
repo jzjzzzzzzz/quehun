@@ -1,4 +1,5 @@
 import ctypes
+import subprocess
 import sys
 import time
 
@@ -14,6 +15,10 @@ def _require_windows():
     if not sys.platform.startswith("win") or not hasattr(ctypes, "windll"):
         raise RuntimeError("Mouse clicking requires Windows.")
     return ctypes.windll.user32
+
+
+def _is_macos():
+    return sys.platform == "darwin"
 
 
 def enable_dpi_awareness():
@@ -96,10 +101,37 @@ class LazyWindowsClicker:
 
     def click(self, x, y):
         if self._clicker is None:
-            self._clicker = WindowsClicker()
+            self._clicker = PlatformClicker()
         self._clicker.click(x, y)
 
 
 class NoOpClicker:
     def click(self, _x, _y):
         return None
+
+
+class MacClicker:
+    def click(self, x, y):
+        script = f'tell application "System Events" to click at {{{int(x)}, {int(y)}}}'
+        completed = subprocess.run(
+            ["osascript", "-e", script],
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+        if completed.returncode != 0:
+            message = completed.stderr.strip() or completed.stdout.strip()
+            raise RuntimeError(
+                "macOS click failed. Grant Accessibility permission to Terminal, "
+                "Python, or your IDE in System Settings > Privacy & Security. "
+                f"Details: {message or 'AppleScript click failed'}"
+            )
+
+
+class PlatformClicker:
+    def __new__(cls):
+        if sys.platform.startswith("win"):
+            return WindowsClicker()
+        if _is_macos():
+            return MacClicker()
+        raise RuntimeError("Mouse clicking is only supported on Windows and macOS.")

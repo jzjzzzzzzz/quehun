@@ -3,13 +3,13 @@ from collections import Counter
 
 from ai.advisor import analyze_hand
 from ai.tile_set import canonical_hand
-from capture.screen import ScreenCapture, capture_window
+from capture.screen import ScreenCapture, capture_screen, capture_window
 from capture.windows_api import find_window, foreground_window
 from cv.real_hand_parser import RealHandParser
 from cv.game_regions import GameRegionRecognizer
 from cv.action_buttons import ActionButtonDetector
 from cv.screen_state import QueHunScreenStateDetector, ScreenState
-from runtime.clicker import WindowsClicker
+from runtime.clicker import LazyWindowsClicker
 from runtime.config import load_config
 from state.game_state import GameState
 from state.tracker import StateTracker
@@ -29,7 +29,7 @@ class AnalysisController:
         self.config = load_config(config_path) if config_path else load_config()
         analysis_config = self.config.get("analysis", {})
         self.auto_click = bool(auto_click)
-        self.clicker = clicker or WindowsClicker()
+        self.clicker = clicker or LazyWindowsClicker()
         self.capture = screen_capture or ScreenCapture(
             debug=analysis_config.get("debug", False),
             debug_dir=analysis_config.get("debug_dir", "debug/screenshots"),
@@ -208,7 +208,10 @@ class AnalysisController:
             return self._warning("window_not_found", "未找到雀魂窗口，等待下一帧")
 
         if frame is None:
-            frame = capture_window(window["hwnd"])
+            if str(window.get("hwnd", "")).startswith("mac:"):
+                frame = capture_screen(region=self._window_region(window))
+            else:
+                frame = capture_window(window["hwnd"])
             if self.capture.debug:
                 self.capture.save_debug(frame, label="window")
         elif self.capture.debug:

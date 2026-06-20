@@ -1,12 +1,38 @@
 # QueHun
 
-Windows 上的雀魂画面识别、麻将牌效率分析和可选安全点击工具。
+雀魂画面识别、麻将牌效率分析和可选安全点击工具。当前支持 Windows；
+macOS 可用系统 `screencapture` 与 AppleScript/System Events 做截图、窗口聚焦和点击。
 
 ## 启动
 
 ```powershell
 .\.venv\Scripts\python.exe main.py
 ```
+
+macOS 可双击：
+
+```bash
+run_quehun_mac.command
+```
+
+或命令行启动：
+
+```bash
+cd /Users/jz/PycharmProjects/QueHun
+.venv/bin/python main.py --gui
+```
+
+macOS 第一次运行前建议先做权限检查：
+
+```bash
+cd /Users/jz/PycharmProjects/QueHun
+.venv/bin/python tools/macos_permissions.py
+```
+
+如果失败，到 `System Settings > Privacy & Security` 给启动程序授权：
+
+- `Screen Recording`：截图识别雀魂画面。
+- `Accessibility`：枚举/聚焦窗口，以及开启自动点击后点击牌。
 
 默认启动 Tkinter 工作台。先打开雀魂友人场或人机房，刷新窗口并用“截图框选”
 校准自己的手牌区域。普通模式只截图和分析，不会点击。

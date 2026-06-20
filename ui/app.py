@@ -8,6 +8,7 @@ from PIL import Image, ImageTk
 
 from capture.screen import capture_screen
 from capture.windows_api import focus_window, list_windows
+from tools.macos_permissions import check_screen, check_windows
 from runtime.analysis_runner import AnalysisRunner
 from runtime.config import DEFAULT_CONFIG_PATH, load_config, parse_region, save_config
 from cv.game_regions import update_region
@@ -135,6 +136,9 @@ class QueHunApp(tk.Tk):
         )
         self.stop_button.pack(side="left", padx=6)
         ttk.Button(controls, text="手动刷新", command=self.manual_refresh).pack(
+            side="left", padx=6
+        )
+        ttk.Button(controls, text="权限自检", command=self.permission_check).pack(
             side="left", padx=6
         )
         ttk.Button(controls, text="保存设置", command=self.save_settings).pack(
@@ -383,6 +387,21 @@ class QueHunApp(tk.Tk):
             self._append_log("已请求立即刷新。")
         else:
             self.start()
+
+    def permission_check(self):
+        checks = [
+            ("窗口枚举/辅助功能", check_windows),
+            ("屏幕录制/截图", check_screen),
+        ]
+        messages = []
+        for label, func in checks:
+            try:
+                ok, message = func()
+            except Exception as exc:
+                ok, message = False, str(exc)
+            messages.append(f"{'OK' if ok else 'FAIL'} {label}: {message}")
+        self._append_log("；".join(messages))
+        messagebox.showinfo("权限自检", "\n".join(messages), parent=self)
 
     def _poll_events(self):
         try:
