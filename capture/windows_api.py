@@ -1,9 +1,8 @@
 import ctypes
+import sys
 from ctypes import wintypes
 
 
-user32 = ctypes.windll.user32
-kernel32 = ctypes.windll.kernel32
 SW_RESTORE = 9
 HWND_TOP = 0
 SWP_NOSIZE = 0x0001
@@ -11,7 +10,18 @@ SWP_NOMOVE = 0x0002
 SWP_SHOWWINDOW = 0x0040
 
 
+def _is_windows():
+    return sys.platform.startswith("win")
+
+
+def _require_windows():
+    if not _is_windows() or not hasattr(ctypes, "windll"):
+        raise RuntimeError("Window management requires Windows.")
+    return ctypes.windll.user32, ctypes.windll.kernel32
+
+
 def _get_window_text(hwnd):
+    user32, _ = _require_windows()
     length = user32.GetWindowTextLengthW(hwnd)
     if length <= 0:
         return ""
@@ -21,6 +31,10 @@ def _get_window_text(hwnd):
 
 
 def list_windows():
+    if not _is_windows():
+        return []
+
+    user32, _ = _require_windows()
     windows = []
 
     enum_proc_type = ctypes.WINFUNCTYPE(wintypes.BOOL, wintypes.HWND, wintypes.LPARAM)
@@ -56,6 +70,7 @@ def find_window(title, exact=False):
 
 
 def focus_window(title, exact=False):
+    user32, kernel32 = _require_windows()
     window = find_window(title, exact=exact)
     if window is None:
         return None
@@ -82,6 +97,10 @@ def focus_window(title, exact=False):
 
 
 def foreground_window():
+    if not _is_windows():
+        return None
+
+    user32, _ = _require_windows()
     hwnd = user32.GetForegroundWindow()
     if not hwnd:
         return None

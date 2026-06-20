@@ -1,4 +1,5 @@
 import ctypes
+import sys
 import time
 
 
@@ -9,12 +10,18 @@ MOUSEEVENTF_LEFTUP = 0x0004
 _DPI_AWARE = False
 
 
+def _require_windows():
+    if not sys.platform.startswith("win") or not hasattr(ctypes, "windll"):
+        raise RuntimeError("Mouse clicking requires Windows.")
+    return ctypes.windll.user32
+
+
 def enable_dpi_awareness():
     global _DPI_AWARE
     if _DPI_AWARE:
         return
 
-    user32 = ctypes.windll.user32
+    user32 = _require_windows()
     try:
         user32.SetProcessDpiAwarenessContext(ctypes.c_void_p(-4))
     except (AttributeError, OSError):
@@ -55,7 +62,7 @@ class WindowsClicker:
         enable_dpi_awareness()
 
     def _send_mouse_event(self, flags):
-        user32 = ctypes.windll.user32
+        user32 = _require_windows()
         extra = ctypes.c_ulong(0)
         event = Input(
             type=INPUT_MOUSE,
@@ -75,7 +82,7 @@ class WindowsClicker:
             raise ctypes.WinError()
 
     def click(self, x, y):
-        user32 = ctypes.windll.user32
+        user32 = _require_windows()
         user32.SetCursorPos(int(x), int(y))
         time.sleep(0.05)
         self._send_mouse_event(MOUSEEVENTF_LEFTDOWN)
