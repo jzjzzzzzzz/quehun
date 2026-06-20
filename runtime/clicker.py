@@ -88,3 +88,18 @@ class WindowsClicker:
         self._send_mouse_event(MOUSEEVENTF_LEFTDOWN)
         time.sleep(0.05)
         self._send_mouse_event(MOUSEEVENTF_LEFTUP)
+
+
+class LazyWindowsClicker:
+    def __init__(self):
+        self._clicker = None
+
+    def click(self, x, y):
+        if self._clicker is None:
+            self._clicker = WindowsClicker()
+        self._clicker.click(x, y)
+
+
+class NoOpClicker:
+    def click(self, _x, _y):
+        return None

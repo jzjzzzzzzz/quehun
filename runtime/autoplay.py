@@ -7,7 +7,7 @@ from ai.tile_set import canonical_hand
 from capture.screen import capture_screen
 from capture.windows_api import find_window, focus_window, foreground_window
 from cv.real_hand_parser import RealHandParser
-from runtime.clicker import WindowsClicker
+from runtime.clicker import LazyWindowsClicker, NoOpClicker
 from runtime.config import load_config
 
 
@@ -15,7 +15,7 @@ class AutoPlayController:
     def __init__(self, config_path=None, dry_run=True, clicker=None, debug_dir=None):
         self.config = load_config(config_path) if config_path else load_config()
         self.dry_run = dry_run
-        self.clicker = clicker or WindowsClicker()
+        self.clicker = clicker or (NoOpClicker() if dry_run else LazyWindowsClicker())
         self.debug_dir = debug_dir
         self.last_hand = None
         self.stable_count = 0
