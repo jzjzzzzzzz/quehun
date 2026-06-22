@@ -18,14 +18,14 @@ run_quehun_mac.command
 或命令行启动：
 
 ```bash
-cd /Users/jz/PycharmProjects/QueHun
+cd /path/to/QueHun
 .venv/bin/python main.py --gui
 ```
 
 macOS 第一次运行前建议先做权限检查：
 
 ```bash
-cd /Users/jz/PycharmProjects/QueHun
+cd /path/to/QueHun
 .venv/bin/python tools/macos_permissions.py
 ```
 
