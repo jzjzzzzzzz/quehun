@@ -18,3 +18,4 @@ desktop.ini
 # Generated model/training outputs
 checkpoints/
 runs/
+dataset/*.zip
