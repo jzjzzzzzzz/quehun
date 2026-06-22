@@ -18,6 +18,8 @@ class GameState:
     round_wind: Optional[str] = None
     seat_wind: Optional[str] = None
     turn_info: Optional[str] = None
+    available_actions: list[dict[str, Any]] = field(default_factory=list)
+    action_text: str = ""
     confidence: float = 0.0
     raw_debug_info: dict[str, Any] = field(default_factory=dict)
     visible_tiles: list[str] = field(default_factory=list)
@@ -39,6 +41,8 @@ class GameState:
         confidence=None,
         drawn_tile=None,
         raw_debug_info=None,
+        available_actions=None,
+        action_text=None,
         **fields,
     ):
         self.history.append(self.current_hand.copy())
@@ -50,6 +54,10 @@ class GameState:
         self.drawn_tile = drawn_tile
         if raw_debug_info is not None:
             self.raw_debug_info = dict(raw_debug_info)
+        if available_actions is not None:
+            self.available_actions = list(available_actions)
+        if action_text is not None:
+            self.action_text = str(action_text or "")
         for name, value in fields.items():
             if hasattr(self, name):
                 setattr(self, name, value)

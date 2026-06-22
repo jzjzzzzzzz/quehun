@@ -65,7 +65,8 @@ DEFAULT_CONFIG = {
     },
     "action_policy": {
         "enabled": False,
-        "allowed_actions": ["pass"],
+        "allowed_actions": ["ron", "tsumo", "riichi", "kan", "pon", "chi", "pass"],
+        "action_priority": ["ron", "tsumo", "riichi", "kan", "pon", "chi", "pass"],
         "min_confidence": 0.80,
         "stable_frames": 2,
     },

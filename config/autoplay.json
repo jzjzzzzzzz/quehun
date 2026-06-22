@@ -74,6 +74,21 @@
   "action_policy": {
     "enabled": false,
     "allowed_actions": [
+      "ron",
+      "tsumo",
+      "riichi",
+      "kan",
+      "pon",
+      "chi",
+      "pass"
+    ],
+    "action_priority": [
+      "ron",
+      "tsumo",
+      "riichi",
+      "kan",
+      "pon",
+      "chi",
       "pass"
     ],
     "min_confidence": 0.8,

@@ -7,6 +7,9 @@ from ai.tile_set import canonical_hand
 from capture.screen import capture_screen
 from capture.windows_api import find_window, focus_window, foreground_window
 from cv.real_hand_parser import RealHandParser
+from cv.game_regions import GameRegionRecognizer
+from cv.action_buttons import ActionButtonDetector
+from cv.screen_state import QueHunScreenStateDetector, ScreenState
 from runtime.clicker import LazyWindowsClicker, NoOpClicker
 from runtime.config import load_config
 
@@ -26,6 +29,11 @@ class AutoPlayController:
             hand_region=self._absolute_hand_region(),
             tile_count=self.config.get("tile_slots", self.config.get("tile_count", 14)),
         )
+        self.region_recognizer = GameRegionRecognizer(
+            classifier=self.parser.classifier
+        )
+        self.action_detector = ActionButtonDetector()
+        self.state_detector = QueHunScreenStateDetector()
 
     def _window_title_candidates(self):
         candidates = []
@@ -257,6 +265,143 @@ class AutoPlayController:
                 actions.append({"action": action, "score": score})
         return actions
 
+    def _scene_state(self, frame):
+        try:
+            hand_region = self.parser.hand_region
+            screen = self.state_detector.detect(frame, hand_region=hand_region)
+            regions = self.region_recognizer.recognize(
+                frame,
+                ocr=getattr(self.state_detector, "ocr", None),
+            )
+            actions = self.action_detector.detect(
+                frame,
+                regions["regions"]["actions"],
+                reference_size=(
+                    self.region_recognizer.config["reference_size"]["width"],
+                    self.region_recognizer.config["reference_size"]["height"],
+                ),
+                ocr=getattr(self.state_detector, "ocr", None),
+            )
+            visible_tiles = [
+                tile
+                for player_discards in regions["discards"].values()
+                for tile in player_discards
+            ] + list(regions["dora_indicators"])
+            return {
+                "screen_state": screen.state.value,
+                "screen_confidence": screen.confidence,
+                "ocr_text": screen.text,
+                "discards": regions["discards"],
+                "dora_indicators": regions["dora_indicators"],
+                "round_wind": regions["round_wind"],
+                "seat_wind": regions["seat_wind"],
+                "visible_actions": actions,
+                "visible_tiles": visible_tiles,
+                "region_details": regions["raw"],
+            }
+        except Exception as exc:
+            return {
+                "screen_state": ScreenState.UNKNOWN.value,
+                "screen_confidence": 0.0,
+                "ocr_text": "",
+                "discards": {"self": [], "right": [], "opposite": [], "left": []},
+                "dora_indicators": [],
+                "round_wind": None,
+                "seat_wind": None,
+                "visible_actions": [],
+                "visible_tiles": [],
+                "region_details": {},
+                "scene_error": str(exc),
+            }
+
+    def _template_action_prompt(self, scene):
+        policy = self.config.get("action_policy", {})
+        if not policy.get("enabled", False):
+            return None
+
+        allowed = set(policy.get("allowed_actions", ["pass"]))
+        minimum = float(policy.get("min_confidence", 0.80))
+        priority = policy.get(
+            "action_priority",
+            ["ron", "tsumo", "riichi", "kan", "pon", "chi", "pass"],
+        )
+        candidates = [
+            action for action in scene.get("visible_actions", [])
+            if action["action"] in allowed and action["confidence"] >= minimum
+        ]
+        if not candidates:
+            return None
+        candidates.sort(
+            key=lambda action: (
+                priority.index(action["action"])
+                if action["action"] in priority
+                else len(priority),
+                -float(action["confidence"]),
+            )
+        )
+        return candidates[0]
+
+    def _handle_template_action_prompt(self, scene):
+        action = self._template_action_prompt(scene)
+        if action is None:
+            return None
+
+        stable_required = int(
+            self.config.get("action_policy", {}).get(
+                "stable_frames",
+                self.config.get("stable_frames", 2),
+            )
+        )
+        signature = (
+            "detected-action",
+            action["action"],
+            action.get("source"),
+            action.get("center", {}).get("x"),
+            action.get("center", {}).get("y"),
+        )
+        if stable_required > 1 and not self._is_stable_action(signature):
+            return {
+                "action": "wait",
+                "reason": f"waiting for stable {action['action']} button",
+                "detected_action": action,
+                "low_confidence_count": None,
+                **scene,
+            }
+        if not self._cooldown_ready():
+            return {
+                "action": "wait",
+                "reason": "click cooldown",
+                "detected_action": action,
+                "low_confidence_count": None,
+                **scene,
+            }
+
+        click = {"x": action["center"]["x"], "y": action["center"]["y"]}
+        if not self.dry_run:
+            if not self._prepare_click():
+                return {
+                    "action": "skip",
+                    "reason": "target window is not foreground",
+                    "detected_action": action,
+                    "low_confidence_count": None,
+                    **scene,
+                }
+            self.clicker.click(click["x"], click["y"])
+            self.last_click_at = time.time()
+
+        return {
+            "action": (
+                f"{action['action']}_dry_run"
+                if self.dry_run
+                else f"{action['action']}_click"
+            ),
+            "reason": "action button detected",
+            "detected_action": action,
+            "click": click,
+            "low_confidence_count": None,
+            **scene,
+        }
+
     def _decide_prompt_action(self, prompts):
         default_action = self.config.get("action_prompt", {}).get("default_action", "pass")
         if any(prompt["action"] == default_action for prompt in prompts):
@@ -359,8 +504,13 @@ class AutoPlayController:
                     "low_confidence_count": None,
                 }
         frame = frame if frame is not None else capture_screen()
+        scene = self._scene_state(frame)
+        template_prompt_result = self._handle_template_action_prompt(scene)
+        if template_prompt_result is not None:
+            return template_prompt_result
         prompt_result = self._handle_action_prompt(frame)
         if prompt_result is not None:
+            prompt_result.update(scene)
             return prompt_result
 
         raw_hand, details = self.parser.parse_with_details(frame)
@@ -376,6 +526,7 @@ class AutoPlayController:
                     "reason": "no tiles recognized",
                     "raw_hand": raw_hand,
                     "details": details,
+                    **scene,
                 }
 
         bonus_indices = self._confident_bonus_indices(details)
@@ -391,6 +542,7 @@ class AutoPlayController:
                     "tile_index": tile_index,
                     "stable_count": self.action_stable_count,
                     "low_confidence_count": len(self._confidence_failures(details)),
+                    **scene,
                 }
 
             if not self._cooldown_ready():
@@ -401,6 +553,7 @@ class AutoPlayController:
                     "raw_hand": raw_hand,
                     "details": details,
                     "low_confidence_count": len(self._confidence_failures(details)),
+                    **scene,
                 }
 
             x, y = self._tile_center(tile_index)
@@ -413,6 +566,7 @@ class AutoPlayController:
                 "tile_index": tile_index,
                 "click": {"x": x, "y": y},
                 "low_confidence_count": len(self._confidence_failures(details)),
+                **scene,
             }
             if not self.dry_run:
                 self._click_tile(x, y)
@@ -431,6 +585,7 @@ class AutoPlayController:
                         "details": details,
                         "stable_count": self.action_stable_count,
                         "low_confidence_count": len(self._confidence_failures(details)),
+                        **scene,
                     }
 
                 click = None
@@ -444,6 +599,7 @@ class AutoPlayController:
                             "raw_hand": raw_hand,
                             "details": details,
                             "low_confidence_count": len(self._confidence_failures(details)),
+                            **scene,
                         }
                     self.last_click_at = time.time()
 
@@ -455,6 +611,7 @@ class AutoPlayController:
                     "details": details,
                     "click": click or {"region": "pass"},
                     "low_confidence_count": len(self._confidence_failures(details)),
+                    **scene,
                 }
 
             return {
@@ -464,6 +621,7 @@ class AutoPlayController:
                 "raw_hand": raw_hand,
                 "details": details,
                 "low_confidence_count": len(self._confidence_failures(details)),
+                **scene,
             }
         if count_state == "skip":
             return {
@@ -473,6 +631,7 @@ class AutoPlayController:
                 "raw_hand": raw_hand,
                 "details": details,
                 "low_confidence_count": len(self._confidence_failures(details)),
+                **scene,
             }
 
         low_confidence = self._confidence_failures(details)
@@ -485,6 +644,7 @@ class AutoPlayController:
                 "raw_hand": raw_hand,
                 "details": details,
                 "low_confidence_count": len(low_confidence),
+                **scene,
             }
 
         if not self._is_stable_hand(hand):
@@ -494,6 +654,7 @@ class AutoPlayController:
                 "hand": hand,
                 "stable_count": self.stable_count,
                 "details": details,
+                **scene,
             }
 
         if not self._cooldown_ready():
@@ -502,9 +663,10 @@ class AutoPlayController:
                 "reason": "click cooldown",
                 "hand": hand,
                 "details": details,
+                **scene,
             }
 
-        decision = decide(hand, visible_tiles=hand)
+        decision = decide(hand, visible_tiles=hand + scene.get("visible_tiles", []))
         discard = decision["discard"]
         tile_index = self._select_tile_index(hand, discard)
 
@@ -515,6 +677,7 @@ class AutoPlayController:
                 "hand": hand,
                 "details": details,
                 "decision": decision,
+                **scene,
             }
 
         x, y = self._tile_center(tile_index)
@@ -528,6 +691,7 @@ class AutoPlayController:
             "click": {"x": x, "y": y},
             "confirm_click": None,
             "low_confidence_count": len(low_confidence),
+            **scene,
         }
 
         if not self.dry_run:

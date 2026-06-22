@@ -137,6 +137,8 @@ class AnalysisController:
         click_config = self.config.get("click", {})
         if not self.auto_click:
             return False, "automatic clicking disabled"
+        if window is None:
+            return False, "target window is not available"
         if click_config.get("require_in_game", True) and state_result.state != ScreenState.IN_GAME:
             return False, "screen is not confidently in-game"
         if click_config.get("require_foreground", True) and not self._foreground_matches(window):
@@ -155,7 +157,12 @@ class AnalysisController:
         return True, "all click safety checks passed"
 
     def _stable_action(self, action):
-        signature = action["action"]
+        signature = (
+            action["action"],
+            action.get("source"),
+            action.get("center", {}).get("x"),
+            action.get("center", {}).get("y"),
+        )
         if signature == self.last_action_signature:
             self.action_stable_count += 1
         else:
@@ -170,6 +177,8 @@ class AnalysisController:
         policy = self.config.get("action_policy", {})
         if not self.auto_click or not policy.get("enabled", False):
             return None, "automatic action responses disabled"
+        if window is None:
+            return None, "target window is not available"
         if state_result.state != ScreenState.IN_GAME:
             return None, "screen is not confidently in-game"
         if self.config.get("click", {}).get("require_foreground", True):
@@ -177,13 +186,23 @@ class AnalysisController:
                 return None, "target window is not foreground"
         allowed = set(policy.get("allowed_actions", ["pass"]))
         minimum = float(policy.get("min_confidence", 0.80))
-        candidate = next(
-            (
-                action for action in actions
-                if action["action"] in allowed and action["confidence"] >= minimum
-            ),
-            None,
+        priority = policy.get(
+            "action_priority",
+            ["ron", "tsumo", "riichi", "kan", "pon", "chi", "pass"],
         )
+        candidates = [
+            action for action in actions
+            if action["action"] in allowed and action["confidence"] >= minimum
+        ]
+        candidates.sort(
+            key=lambda action: (
+                priority.index(action["action"])
+                if action["action"] in priority
+                else len(priority),
+                -float(action["confidence"]),
+            )
+        )
+        candidate = candidates[0] if candidates else None
         if candidate is None:
             return None, "no allowed action button detected"
         if not self._stable_action(candidate):
@@ -229,7 +248,13 @@ class AnalysisController:
         visible_actions = self.action_detector.detect(
             frame,
             region_state["regions"]["actions"],
+            reference_size=(
+                self.region_recognizer.config["reference_size"]["width"],
+                self.region_recognizer.config["reference_size"]["height"],
+            ),
+            ocr=getattr(self.state_detector, "ocr", None),
         )
+        action_text = self._action_text(visible_actions)
         if self.capture.debug:
             tile_debug_dir = self.config.get("analysis", {}).get(
                 "tile_debug_dir",
@@ -263,6 +288,8 @@ class AnalysisController:
             round_wind=region_state["round_wind"],
             seat_wind=region_state["seat_wind"],
             turn_info="discard" if len(hand) == 14 else "waiting",
+            available_actions=visible_actions,
+            action_text=action_text,
             raw_debug_info={
                 "screen_state": state_result.state.value,
                 "screen_confidence": state_result.confidence,
@@ -274,6 +301,7 @@ class AnalysisController:
                 "round_confidence": region_state["round_confidence"],
                 "seat_confidence": region_state["seat_confidence"],
                 "visible_actions": visible_actions,
+                "action_text": action_text,
                 "learned_discard_template": learned_discard_template,
                 "stable": stable,
             },
@@ -344,8 +372,18 @@ class AnalysisController:
             "click": click,
             "click_reason": click_reason,
             "visible_actions": visible_actions,
+            "action_text": action_text,
             "learned_discard_template": learned_discard_template,
         }
+
+    @staticmethod
+    def _action_text(actions):
+        texts = []
+        for action in actions or []:
+            text = action.get("text")
+            if text and text not in texts:
+                texts.append(text)
+        return "\n".join(texts)
 
     def _learn_discard_transition(self, hand, confidence, region_state):
         self_count = len(
