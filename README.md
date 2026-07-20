@@ -1,103 +1,132 @@
 # QueHun
 
-雀魂画面识别、麻将牌效率分析和可选安全点击工具。当前支持 Windows；
-macOS 可用系统 `screencapture` 与 AppleScript/System Events 做截图、窗口聚焦和点击。
+[![CI](https://github.com/jzjzzzzzzz/quehun/actions/workflows/ci.yml/badge.svg)](https://github.com/jzjzzzzzzz/quehun/actions/workflows/ci.yml)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB.svg)](https://www.python.org/)
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
-## 启动
+雀魂画面识别、日麻牌效率分析和可选安全点击工具。项目同时提供无需游戏客户端的
+四人自对局模拟器，以及 Windows/macOS 实机只读分析工作台。
 
-```powershell
-.\.venv\Scripts\python.exe main.py
-```
+## 功能
 
-macOS 可双击：
+- 跨平台窗口枚举、截图和前台状态检测；
+- 手牌分割、模板分类、OCR/视觉页面状态与可缩放区域识别；
+- 河牌、宝牌指示牌、场风/自风和动作按钮识别；
+- 向听数、有效进张、和牌、役种、危险度和前三候选弃牌说明；
+- 紧凑牌谱、Unicode 麻将牌、宝牌轮转与手牌合法性工具；
+- Tkinter 校准/分析界面；
+- 默认关闭、具备多重前置条件的可选点击控制器；
+- 可复现的日麻自对局模拟和完整回归测试。
 
-```bash
-run_quehun_mac.command
-```
+> 当前实机分类器以本地模板/原型为主，不依赖 Torch。不同客户端版本、分辨率和缩放
+> 比例需要重新校准手牌与动作区域。
 
-或命令行启动：
+## 环境要求
 
-```bash
-cd /path/to/QueHun
-.venv/bin/python main.py --gui
-```
+- Python 3.11 或更高版本；
+- Windows 10/11 或 macOS；Linux 可运行纯牌理逻辑和测试；
+- 可选的 Tesseract OCR。仓库内提供中英文语言数据，但仍需可执行文件；
+- macOS 实机分析需要 Screen Recording 权限，点击还需要 Accessibility 权限。
 
-macOS 第一次运行前建议先做权限检查：
+## 安装
 
-```bash
-cd /path/to/QueHun
-.venv/bin/python tools/macos_permissions.py
-```
-
-如果失败，到 `System Settings > Privacy & Security` 给启动程序授权：
-
-- `Screen Recording`：截图识别雀魂画面。
-- `Accessibility`：枚举/聚焦窗口，以及开启自动点击后点击牌。
-
-默认启动 Tkinter 工作台。先打开雀魂友人场或人机房，刷新窗口并用“截图框选”
-校准自己的手牌区域。普通模式只截图和分析，不会点击。
-
-命令行只读分析：
+### Windows PowerShell
 
 ```powershell
-.\.venv\Scripts\python.exe main.py --analyze
+py -3.11 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
-按 `Ctrl+C` 停止。Debug 模式：
+### macOS/Linux
 
-```powershell
-.\.venv\Scripts\python.exe main.py --analyze --debug
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
-整窗截图最多保留 50 张于 `debug/screenshots`；最新手牌切片保存在
+训练 `model/` 中的 Torch 模型时，改用：
+
+```bash
+python -m pip install -r requirements-training.txt
+```
+
+## 快速开始
+
+启动图形工作台：
+
+```bash
+python main.py --gui
+```
+
+不带参数也会启动 UI。macOS 可以双击 `run_quehun_mac.command`，首次使用前建议运行：
+
+```bash
+python tools/macos_permissions.py
+```
+
+常用命令：
+
+| 目的 | 命令 |
+| --- | --- |
+| 只读分析循环 | `python main.py --analyze` |
+| Debug 分析 | `python main.py --analyze --debug` |
+| 单桌模拟 | `python main.py --simulate --seed 1` |
+| 四人完整对局 | `python main.py --full-game --rounds 4` |
+| 窗口列表 | `python main.py --list-windows` |
+| 保存窗口截图 | `python main.py --save-window-screenshot quehun.png --window-title QueHun` |
+| 自动出牌 dry-run | `python main.py --auto-play --iterations 5` |
+
+Debug 整窗截图最多保留 50 张于 `debug/screenshots`，最新手牌切片保存在
 `debug/tiles/latest`。
 
-## 自动点击
+## 实机校准
 
-UI 中的“启用自动出牌点击”默认关闭。启用后仍必须同时满足：
+先打开雀魂友人场或人机房，然后用 UI 的“截图框选”紧密框住自己的全部手牌槽位。
+也可以通过 CLI 保存窗口截图、测量 `left,top,width,height` 并写入配置。
 
-- 页面识别为对局中
-- 雀魂是前台窗口
-- 连续帧手牌稳定
-- 正好识别 14 张牌
-- 总体置信度达到点击阈值
-- 未重复处理同一手牌且冷却结束
+完整步骤和 Windows/macOS 示例见 [`docs/calibration.md`](docs/calibration.md)。模板标签与
+目录结构见 [`templates/tiles/README.md`](templates/tiles/README.md)。
 
-“自动点击跳过”是独立开关，只允许匹配到高置信度 `pass` 模板时响应；
-它仍要求总自动点击开关已启用。
+## 点击保护
 
-仅在人机友人房校准和验证。动作按钮区域仍需针对当前客户端布局配置。
+只读分析是默认模式。弃牌点击必须同时满足：
 
-## 模板校准
+- 识别为对局中且目标窗口位于前台；
+- 手牌连续帧稳定且牌数符合动作阶段；
+- 总体和单牌置信度达到阈值；
+- 坐标位于已校准区域；
+- 不是重复处理的手牌；
+- 点击冷却已经结束。
 
-Debug 截图后，将最新 14 个切片标注并导入：
+动作按钮还受到独立模板置信度、稳定帧和动作白名单限制。修改识别或点击逻辑时必须
+保留这些前置条件，并先验证 dry-run。
 
-```powershell
-.\.venv\Scripts\python.exe main.py --learn-debug-tiles m1,m2,m3,p1,p2,p3,s1,s2,s3,east,south,west,white,red
+## 开发
+
+```bash
+python -m pip install -r requirements-dev.txt
+ruff format --check .
+ruff check .
+python -m pytest
+python -m compileall -q ai capture cv model runtime state tools ui main.py
 ```
 
-标签写入 `templates/tiles`。空槽或坏切片使用 `skip`。
+项目在 Python 3.11 和 3.13 上运行相同 CI。贡献流程、识别测试要求和提交约定见
+[`CONTRIBUTING.md`](CONTRIBUTING.md)。
 
-## OCR
+## 文档
 
-程序使用系统 Tesseract 可执行文件和项目内 `tools/tessdata` 中的中英文语言
-数据。没有 OCR 或单帧 OCR 失败时，程序使用视觉特征并继续下一帧。
+- [架构与模块边界](docs/architecture.md)
+- [实机校准](docs/calibration.md)
+- [麻将牌记法与校验 API](docs/mahjong_notation.md)
+- [变更记录](CHANGELOG.md)
+- [安全报告](SECURITY.md)
 
-## Extended Recognition
+## 数据与许可
 
-- `config/screen_regions.json` stores scalable regions for four discard rivers,
-  dora, round wind, seat wind, and action buttons.
-- The UI calibration selector can update any of these regions.
-- Round/seat wind and action buttons use visual templates when OCR is unsuitable.
-- River tiles learn perspective templates automatically after reliable 14-to-13
-  hand transitions.
-
-## Tile notation utilities
-
-`ai.notation` converts compact input such as `123m456p789s12344z`, separated
-aliases, and Unicode Mahjong Tile symbols into the canonical names consumed by
-the analyzer. It also provides deterministic sorting, Unicode/compact output,
-dora-indicator conversion, hand summaries, and physical-copy validation.
-
-See [`docs/mahjong_notation.md`](docs/mahjong_notation.md) for the supported
-grammar and API examples.
+项目源码使用 [Apache License 2.0](LICENSE)。`dataset/` 中的麻将牌数据保留其独立的
+[MIT License](dataset/LICENSE) 和来源说明；新增图片、模板或模型时必须记录来源与许可。

@@ -1,21 +1,17 @@
 import os
-import sys
 import tempfile
 
 import cv2
 
-ROOT = os.path.dirname(os.path.dirname(__file__))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
-
 from cv.action_buttons import ActionButtonDetector
 from cv.game_regions import (
-    ContourTileParser,
     PerspectiveTileClassifier,
     load_regions,
     scaled_region,
     update_region,
 )
+
+ROOT = os.path.dirname(os.path.dirname(__file__))
 
 
 def test_scaled_region():
@@ -33,6 +29,7 @@ def test_update_region_preserves_grid_metadata():
         path = os.path.join(directory, "regions.json")
         source = load_regions()
         import json
+
         with open(path, "w", encoding="utf-8") as file:
             json.dump(source, file)
         updated = update_region(

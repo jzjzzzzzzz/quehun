@@ -8,15 +8,18 @@ from PIL import Image, ImageTk
 
 from capture.screen import capture_screen
 from capture.windows_api import focus_window, list_windows
-from tools.macos_permissions import check_screen, check_windows
+from cv.game_regions import update_region
 from runtime.analysis_runner import AnalysisRunner
 from runtime.config import DEFAULT_CONFIG_PATH, load_config, parse_region, save_config
-from cv.game_regions import update_region
-
+from tools.macos_permissions import check_screen, check_windows
 
 TILE_NAMES = {
-    "honors-east": "东", "honors-south": "南", "honors-west": "西",
-    "honors-north": "北", "honors-white": "白", "honors-green": "发",
+    "honors-east": "东",
+    "honors-south": "南",
+    "honors-west": "西",
+    "honors-north": "北",
+    "honors-white": "白",
+    "honors-green": "发",
     "honors-red": "中",
 }
 
@@ -131,19 +134,13 @@ class QueHunApp(tk.Tk):
         controls.grid(row=1, column=0, sticky="ew", padx=10, pady=5)
         self.start_button = ttk.Button(controls, text="Start", command=self.start)
         self.start_button.pack(side="left", padx=(0, 6))
-        self.stop_button = ttk.Button(
-            controls, text="Stop", command=self.stop, state="disabled"
-        )
+        self.stop_button = ttk.Button(controls, text="Stop", command=self.stop, state="disabled")
         self.stop_button.pack(side="left", padx=6)
-        ttk.Button(controls, text="手动刷新", command=self.manual_refresh).pack(
-            side="left", padx=6
-        )
+        ttk.Button(controls, text="手动刷新", command=self.manual_refresh).pack(side="left", padx=6)
         ttk.Button(controls, text="权限自检", command=self.permission_check).pack(
             side="left", padx=6
         )
-        ttk.Button(controls, text="保存设置", command=self.save_settings).pack(
-            side="left", padx=6
-        )
+        ttk.Button(controls, text="保存设置", command=self.save_settings).pack(side="left", padx=6)
         ttk.Checkbutton(controls, text="Debug 截图", variable=self.debug_var).pack(
             side="left", padx=(18, 6)
         )
@@ -235,7 +232,8 @@ class QueHunApp(tk.Tk):
 
     def refresh_windows(self):
         windows = [
-            window for window in list_windows()
+            window
+            for window in list_windows()
             if window["width"] >= 500 and window["height"] >= 400
         ]
         self.window_lookup = {
@@ -247,7 +245,8 @@ class QueHunApp(tk.Tk):
         configured = self.config.get("window_title", "")
         selected = next(
             (
-                label for label, window in self.window_lookup.items()
+                label
+                for label, window in self.window_lookup.items()
                 if window["title"] == configured
             ),
             None,
@@ -255,10 +254,16 @@ class QueHunApp(tk.Tk):
         if not selected:
             selected = next(
                 (
-                    label for label, window in self.window_lookup.items()
-                    if any(name.lower() in window["title"].lower() for name in (
-                        "雀魂", "mahjongsoul", "mahjong soul",
-                    ))
+                    label
+                    for label, window in self.window_lookup.items()
+                    if any(
+                        name.lower() in window["title"].lower()
+                        for name in (
+                            "雀魂",
+                            "mahjongsoul",
+                            "mahjong soul",
+                        )
+                    )
                 ),
                 values[0] if values else None,
             )
@@ -279,10 +284,14 @@ class QueHunApp(tk.Tk):
         try:
             focus_window(window["title"], exact=True)
             time.sleep(0.3)
-            frame = capture_screen(region={
-                "left": window["left"], "top": window["top"],
-                "width": window["width"], "height": window["height"],
-            })
+            frame = capture_screen(
+                region={
+                    "left": window["left"],
+                    "top": window["top"],
+                    "width": window["width"],
+                    "height": window["height"],
+                }
+            )
             self.calibration_frame_size = (frame.shape[1], frame.shape[0])
         except Exception as exc:
             self.deiconify()
@@ -427,8 +436,7 @@ class QueHunApp(tk.Tk):
         if frame is not None:
             self._show_preview(frame)
         self.screen_state_var.set(
-            f"{result.get('screen_state', 'unknown')} "
-            f"({result.get('screen_confidence', 0.0):.0%})"
+            f"{result.get('screen_state', 'unknown')} ({result.get('screen_confidence', 0.0):.0%})"
         )
         hand = result.get("hand") or []
         self.hand_var.set(" ".join(display_tile(tile) for tile in hand) or "-")
@@ -455,7 +463,8 @@ class QueHunApp(tk.Tk):
             f"动作：{result.get('action')}",
             f"点击保护：{result.get('click_reason', '-')}",
             f"点击坐标：{result.get('click') or '-'}",
-            "可见动作：" + ", ".join(
+            "可见动作："
+            + ", ".join(
                 f"{item['action']}({item['confidence']:.0%})"
                 for item in result.get("visible_actions") or []
             ),
@@ -463,22 +472,17 @@ class QueHunApp(tk.Tk):
         ]
         game_state = result.get("game_state") or {}
         detail.append(
-            "宝牌指示：" + " ".join(
-                display_tile(tile)
-                for tile in game_state.get("dora_indicators") or []
-            )
+            "宝牌指示："
+            + " ".join(display_tile(tile) for tile in game_state.get("dora_indicators") or [])
         )
         for player, tiles in (game_state.get("discards") or {}).items():
-            detail.append(
-                f"{player} 牌河：" + " ".join(display_tile(tile) for tile in tiles)
-            )
+            detail.append(f"{player} 牌河：" + " ".join(display_tile(tile) for tile in tiles))
         self._replace_text(self.detail_text, "\n".join(detail))
         if result.get("warning"):
             self._append_log(f"WARNING：{result['warning']}")
         elif result.get("action") == "clicked":
             self._append_log(
-                f"已自动点击建议牌 {display_tile(result.get('discard'))}："
-                f"{result.get('click')}"
+                f"已自动点击建议牌 {display_tile(result.get('discard'))}：{result.get('click')}"
             )
 
     def _show_preview(self, frame):
@@ -536,8 +540,11 @@ class CalibrationDialog(tk.Toplevel):
         self.photo = ImageTk.PhotoImage(display)
         ttk.Label(self, text="拖动矩形，紧密框住自己的全部手牌槽位。", padding=8).pack(fill="x")
         self.canvas = tk.Canvas(
-            self, width=display_size[0], height=display_size[1],
-            cursor="crosshair", highlightthickness=0,
+            self,
+            width=display_size[0],
+            height=display_size[1],
+            cursor="crosshair",
+            highlightthickness=0,
         )
         self.canvas.pack()
         self.canvas.create_image(0, 0, image=self.photo, anchor="nw")
@@ -564,10 +571,12 @@ class CalibrationDialog(tk.Toplevel):
         top, bottom = sorted((self.start[1], event.y))
         if right - left < 20 or bottom - top < 20:
             return
-        self.on_selected({
-            "left": int(round(left / self.scale)),
-            "top": int(round(top / self.scale)),
-            "width": int(round((right - left) / self.scale)),
-            "height": int(round((bottom - top) / self.scale)),
-        })
+        self.on_selected(
+            {
+                "left": int(round(left / self.scale)),
+                "top": int(round(top / self.scale)),
+                "width": int(round((right - left) / self.scale)),
+                "height": int(round((bottom - top) / self.scale)),
+            }
+        )
         self.destroy()

@@ -2,18 +2,17 @@ import argparse
 import sys
 import time
 
-from capture.screen import capture_screen
-from capture.screen import save_screenshot, save_window_screenshot as save_hwnd_screenshot
+from capture.screen import capture_screen, save_screenshot
+from capture.screen import save_window_screenshot as save_hwnd_screenshot
 from capture.windows_api import find_window, list_windows
-from cv.calibration import DEFAULT_DEBUG_DIR, DEFAULT_OUTPUT_DIR
-from cv.calibration import learn_debug_tiles, parse_labels
+from cv.calibration import DEFAULT_DEBUG_DIR, DEFAULT_OUTPUT_DIR, learn_debug_tiles, parse_labels
+from runtime.analyzer import AnalysisController
 from runtime.autoplay import AutoPlayController
 from runtime.clicker import WindowsClicker
 from runtime.config import DEFAULT_CONFIG_PATH, load_config, parse_region, save_config
 from runtime.full_game import FullJapaneseGame
 from runtime.japanese_game import JapaneseMahjongGame
 from runtime.pipeline import Pipeline
-from runtime.analyzer import AnalysisController
 
 
 def configure_output():

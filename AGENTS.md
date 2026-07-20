@@ -37,6 +37,7 @@ This project has two working paths:
 - `cv/action_buttons.py` - visual action-button template detection.
 - `ai/advisor.py` - explainable top-three discard advice and danger interface.
 - `ai/engine.py` - discard decision.
+- `ai/notation.py` - compact/Unicode notation, dora, sorting, summaries, and validation.
 - `ai/agari.py`, `ai/shanten.py`, `ai/ukeire.py`, `ai/japanese_rules.py` - mahjong logic.
 
 ## Real QueHun Calibration Workflow
@@ -93,14 +94,14 @@ Enable real clicking only after dry-run recognition and click coordinates look c
 ## Verification Commands
 
 ```powershell
-.\.venv\Scripts\python.exe test\test_autoplay.py
-.\.venv\Scripts\python.exe test\test_full_game.py
-.\.venv\Scripts\python.exe test\test_japanese_game.py
-.\.venv\Scripts\python.exe test\test_ai.py
-.\.venv\Scripts\python.exe test\test_cv.py
-.\.venv\Scripts\python.exe test\test_pipeline.py
-.\.venv\Scripts\python.exe -m compileall ai capture cv runtime state test main.py
+.\.venv\Scripts\ruff.exe format --check .
+.\.venv\Scripts\ruff.exe check .
+.\.venv\Scripts\python.exe -m pytest
+.\.venv\Scripts\python.exe -m compileall ai capture cv model runtime state test tools ui main.py
 ```
+
+Install `requirements-dev.txt` before running the quality checks. Runtime, development,
+and optional Torch training dependencies are intentionally kept separate.
 
 ## Next Work After Screenshot
 

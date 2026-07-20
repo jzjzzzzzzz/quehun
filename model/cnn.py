@@ -1,5 +1,5 @@
-import torch
 import torch.nn as nn
+
 
 class CNN(nn.Module):
     def __init__(self, num_classes=34):
@@ -10,12 +10,10 @@ class CNN(nn.Module):
             nn.BatchNorm2d(32),
             nn.ReLU(),
             nn.MaxPool2d(2),
-
             nn.Conv2d(32, 64, 3, padding=1),
             nn.BatchNorm2d(64),
             nn.ReLU(),
             nn.MaxPool2d(2),
-
             nn.Conv2d(64, 128, 3, padding=1),
             nn.BatchNorm2d(128),
             nn.ReLU(),
@@ -25,10 +23,7 @@ class CNN(nn.Module):
         self.pool = nn.AdaptiveAvgPool2d((1, 1))
 
         self.classifier = nn.Sequential(
-            nn.Linear(128, 256),
-            nn.ReLU(),
-            nn.Dropout(0.3),
-            nn.Linear(256, num_classes)
+            nn.Linear(128, 256), nn.ReLU(), nn.Dropout(0.3), nn.Linear(256, num_classes)
         )
 
     def forward(self, x):

@@ -1,14 +1,21 @@
-from functools import lru_cache
+from functools import cache
 
 from ai.tile_set import PLAYABLE_TILES, canonical_hand
 
-
 ORPHANS = {
-    "characters-1", "characters-9",
-    "dots-1", "dots-9",
-    "bamboo-1", "bamboo-9",
-    "honors-east", "honors-south", "honors-west", "honors-north",
-    "honors-red", "honors-green", "honors-white",
+    "characters-1",
+    "characters-9",
+    "dots-1",
+    "dots-9",
+    "bamboo-1",
+    "bamboo-9",
+    "honors-east",
+    "honors-south",
+    "honors-west",
+    "honors-north",
+    "honors-red",
+    "honors-green",
+    "honors-white",
 }
 
 
@@ -24,7 +31,7 @@ def _counts(hand):
     return tuple(counts)
 
 
-@lru_cache(maxsize=None)
+@cache
 def _meld_taatsu(counts):
     counts = list(counts)
 

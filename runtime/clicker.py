@@ -2,7 +2,7 @@ import ctypes
 import subprocess
 import sys
 import time
-
+from contextlib import suppress
 
 INPUT_MOUSE = 0
 MOUSEEVENTF_LEFTDOWN = 0x0002
@@ -33,10 +33,8 @@ def enable_dpi_awareness():
         try:
             ctypes.windll.shcore.SetProcessDpiAwareness(2)
         except (AttributeError, OSError):
-            try:
+            with suppress(AttributeError, OSError):
                 user32.SetProcessDPIAware()
-            except (AttributeError, OSError):
-                pass
     _DPI_AWARE = True
 
 
@@ -116,8 +114,8 @@ class MacClicker:
         completed = subprocess.run(
             ["osascript", "-e", script],
             text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
+            check=False,
         )
         if completed.returncode != 0:
             message = completed.stderr.strip() or completed.stdout.strip()

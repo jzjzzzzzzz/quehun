@@ -1,16 +1,14 @@
 import os
-import sys
+
 import cv2
 import numpy as np
-
-ROOT = os.path.dirname(os.path.dirname(__file__))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
 
 from cv.calibration import learn_debug_tiles, parse_labels
 from cv.template_classifier import TemplateTileClassifier
 from runtime.autoplay import AutoPlayController
 from runtime.config import save_config
+
+ROOT = os.path.dirname(os.path.dirname(__file__))
 
 
 class FakeParser:
@@ -132,8 +130,12 @@ def test_learns_debug_tiles():
     for filename in os.listdir(debug_dir):
         os.remove(os.path.join(debug_dir, filename))
 
-    cv2.imwrite(os.path.join(debug_dir, "tile-00-unknown.png"), np.zeros((16, 16, 3), dtype=np.uint8))
-    cv2.imwrite(os.path.join(debug_dir, "tile-01-unknown.png"), np.ones((16, 16, 3), dtype=np.uint8) * 255)
+    cv2.imwrite(
+        os.path.join(debug_dir, "tile-00-unknown.png"), np.zeros((16, 16, 3), dtype=np.uint8)
+    )
+    cv2.imwrite(
+        os.path.join(debug_dir, "tile-01-unknown.png"), np.ones((16, 16, 3), dtype=np.uint8) * 255
+    )
 
     labels = parse_labels("m1,p9")
     written = learn_debug_tiles(labels, debug_dir=debug_dir, output_dir=output_dir)
@@ -172,13 +174,16 @@ def test_configured_click_enable_controls_dry_run():
     tmp_dir = os.path.join(ROOT, ".tmp")
     os.makedirs(tmp_dir, exist_ok=True)
     path = os.path.join(tmp_dir, "autoplay-click-enabled-test.json")
-    save_config({
-        "window_title": "",
-        "region_mode": "absolute",
-        "hand_region": {"left": 0, "top": 0, "width": 140, "height": 20},
-        "tile_count": 14,
-        "click": {"enabled": True},
-    }, path)
+    save_config(
+        {
+            "window_title": "",
+            "region_mode": "absolute",
+            "hand_region": {"left": 0, "top": 0, "width": 140, "height": 20},
+            "tile_count": 14,
+            "click": {"enabled": True},
+        },
+        path,
+    )
 
     args = Args()
     args.config = path
@@ -226,13 +231,24 @@ def test_discard_click_can_confirm_region():
 
     details = [
         {"index": idx, "tile": tile, "confidence": 0.9, "error": 0.01}
-        for idx, tile in enumerate([
-            "characters-1", "characters-2", "characters-3",
-            "dots-5", "dots-6", "dots-7",
-            "bamboo-2", "bamboo-3", "bamboo-4",
-            "honors-east", "honors-east", "honors-red",
-            "honors-green", "honors-white",
-        ])
+        for idx, tile in enumerate(
+            [
+                "characters-1",
+                "characters-2",
+                "characters-3",
+                "dots-5",
+                "dots-6",
+                "dots-7",
+                "bamboo-2",
+                "bamboo-3",
+                "bamboo-4",
+                "honors-east",
+                "honors-east",
+                "honors-red",
+                "honors-green",
+                "honors-white",
+            ]
+        )
     ]
 
     clicker = FakeClicker()

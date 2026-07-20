@@ -1,22 +1,20 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torchvision import transforms
 from torch.utils.data import DataLoader, random_split
+from torchvision import transforms
 
-from model.dataset import MahjongDataset
 from model import CNN
+from model.dataset import MahjongDataset
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 IMG_DIR = "../dataset/tiles-resized"
 CSV_FILE = "../dataset/tiles-data/data.csv"
 
-transform = transforms.Compose([
-    transforms.Resize((128,128)),
-    transforms.RandomRotation(10),
-    transforms.ToTensor()
-])
+transform = transforms.Compose(
+    [transforms.Resize((128, 128)), transforms.RandomRotation(10), transforms.ToTensor()]
+)
 
 dataset = MahjongDataset(IMG_DIR, CSV_FILE, transform)
 
@@ -65,7 +63,7 @@ for epoch in range(15):
 
     acc = correct / total
 
-    print(f"Epoch {epoch+1} | loss={total_loss:.3f} | acc={acc:.3f}")
+    print(f"Epoch {epoch + 1} | loss={total_loss:.3f} | acc={acc:.3f}")
 
 torch.save(model.state_dict(), "../model.pth")
 print("训练完成")

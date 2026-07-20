@@ -5,9 +5,9 @@ from ai.advisor import analyze_hand
 from ai.tile_set import canonical_hand
 from capture.screen import ScreenCapture, capture_screen, capture_window
 from capture.windows_api import find_window, foreground_window
-from cv.real_hand_parser import RealHandParser
-from cv.game_regions import GameRegionRecognizer
 from cv.action_buttons import ActionButtonDetector
+from cv.game_regions import GameRegionRecognizer
+from cv.real_hand_parser import RealHandParser
 from cv.screen_state import QueHunScreenStateDetector, ScreenState
 from runtime.clicker import LazyWindowsClicker
 from runtime.config import load_config
@@ -47,9 +47,7 @@ class AnalysisController:
             hand_region=self._frame_hand_region(None),
             tile_count=self.config.get("tile_slots", self.config.get("tile_count", 14)),
         )
-        self.region_recognizer = GameRegionRecognizer(
-            classifier=self.parser.classifier
-        )
+        self.region_recognizer = GameRegionRecognizer(classifier=self.parser.classifier)
         self.action_detector = ActionButtonDetector()
         self.last_action_signature = None
         self.action_stable_count = 0
@@ -115,8 +113,7 @@ class AnalysisController:
     def _recognized_hand(self, details):
         minimum = float(self.config.get("min_confidence", 0.25))
         return canonical_hand(
-            item["tile"] for item in details
-            if item.get("confidence", 0.0) >= minimum
+            item["tile"] for item in details if item.get("confidence", 0.0) >= minimum
         )
 
     @staticmethod
@@ -168,9 +165,7 @@ class AnalysisController:
         else:
             self.last_action_signature = signature
             self.action_stable_count = 1
-        required = int(
-            self.config.get("action_policy", {}).get("stable_frames", 2)
-        )
+        required = int(self.config.get("action_policy", {}).get("stable_frames", 2))
         return self.action_stable_count >= max(1, required)
 
     def _maybe_click_action(self, window, state_result, actions):
@@ -181,9 +176,10 @@ class AnalysisController:
             return None, "target window is not available"
         if state_result.state != ScreenState.IN_GAME:
             return None, "screen is not confidently in-game"
-        if self.config.get("click", {}).get("require_foreground", True):
-            if not self._foreground_matches(window):
-                return None, "target window is not foreground"
+        if self.config.get("click", {}).get(
+            "require_foreground", True
+        ) and not self._foreground_matches(window):
+            return None, "target window is not foreground"
         allowed = set(policy.get("allowed_actions", ["pass"]))
         minimum = float(policy.get("min_confidence", 0.80))
         priority = policy.get(
@@ -191,14 +187,13 @@ class AnalysisController:
             ["ron", "tsumo", "riichi", "kan", "pon", "chi", "pass"],
         )
         candidates = [
-            action for action in actions
+            action
+            for action in actions
             if action["action"] in allowed and action["confidence"] >= minimum
         ]
         candidates.sort(
             key=lambda action: (
-                priority.index(action["action"])
-                if action["action"] in priority
-                else len(priority),
+                priority.index(action["action"]) if action["action"] in priority else len(priority),
                 -float(action["confidence"]),
             )
         )
@@ -386,9 +381,7 @@ class AnalysisController:
         return "\n".join(texts)
 
     def _learn_discard_transition(self, hand, confidence, region_state):
-        self_count = len(
-            self.region_recognizer.last_discard_crops.get("self") or []
-        )
+        self_count = len(self.region_recognizer.last_discard_crops.get("self") or [])
         learned = None
         if (
             len(self.previous_hand) == 14

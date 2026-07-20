@@ -1,11 +1,11 @@
 from dataclasses import asdict, dataclass, field
-from typing import Any, Optional
+from typing import Any
 
 
 @dataclass
 class GameState:
     current_hand: list[str] = field(default_factory=list)
-    drawn_tile: Optional[str] = None
+    drawn_tile: str | None = None
     discards: dict[str, list[str]] = field(
         default_factory=lambda: {
             "self": [],
@@ -15,9 +15,9 @@ class GameState:
         }
     )
     dora_indicators: list[str] = field(default_factory=list)
-    round_wind: Optional[str] = None
-    seat_wind: Optional[str] = None
-    turn_info: Optional[str] = None
+    round_wind: str | None = None
+    seat_wind: str | None = None
+    turn_info: str | None = None
     available_actions: list[dict[str, Any]] = field(default_factory=list)
     action_text: str = ""
     confidence: float = 0.0

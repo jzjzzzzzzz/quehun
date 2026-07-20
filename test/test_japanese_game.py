@@ -1,10 +1,3 @@
-import os
-import sys
-
-ROOT = os.path.dirname(os.path.dirname(__file__))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
-
 from ai.agari import THIRTEEN_ORPHANS, is_thirteen_orphans, is_win, winning_tiles
 from ai.japanese_rules import estimate_points, yaku_for_win
 from runtime.japanese_game import JapaneseMahjongGame
@@ -12,11 +5,20 @@ from runtime.japanese_game import JapaneseMahjongGame
 
 def test_win_detection():
     hand = [
-        "m1", "m2", "m3",
-        "p1", "p2", "p3",
-        "s1", "s2", "s3",
-        "east", "east",
-        "red", "red", "red",
+        "m1",
+        "m2",
+        "m3",
+        "p1",
+        "p2",
+        "p3",
+        "s1",
+        "s2",
+        "s3",
+        "east",
+        "east",
+        "red",
+        "red",
+        "red",
     ]
 
     assert is_win(hand)
@@ -24,11 +26,19 @@ def test_win_detection():
 
 def test_winning_tiles():
     hand = [
-        "m1", "m2", "m3",
-        "p1", "p2", "p3",
-        "s1", "s2", "s3",
-        "east", "east",
-        "red", "red",
+        "m1",
+        "m2",
+        "m3",
+        "p1",
+        "p2",
+        "p3",
+        "s1",
+        "s2",
+        "s3",
+        "east",
+        "east",
+        "red",
+        "red",
     ]
 
     assert "honors-red" in winning_tiles(hand)

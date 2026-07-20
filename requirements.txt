@@ -1,8 +1,6 @@
-numpy>=2.0
-opencv-python>=4.10
-Pillow>=11.0
-pytesseract>=0.3.10
-pytest>=8.0
-pandas>=2.2
-torch>=2.5
-torchvision>=0.20
+# Runtime dependencies. Development and model-training dependencies live in
+# requirements-dev.txt and requirements-training.txt respectively.
+numpy>=2.0,<3
+opencv-python>=4.10,<5
+Pillow>=11.0,<13
+pytesseract>=0.3.10,<0.4

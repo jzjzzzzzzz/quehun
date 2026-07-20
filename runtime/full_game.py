@@ -7,7 +7,6 @@ from ai.japanese_rules import estimate_points, yaku_for_win
 from ai.shanten import simple_shanten
 from ai.tile_set import PLAYABLE_TILES
 
-
 SEAT_WINDS = ("east", "south", "west", "north")
 
 
@@ -31,8 +30,7 @@ class FullJapaneseGame:
         self.rounds = rounds
         self.start_score = start_score
         self.players = [
-            PlayerState(f"Player {idx + 1}", SEAT_WINDS[idx], start_score)
-            for idx in range(4)
+            PlayerState(f"Player {idx + 1}", SEAT_WINDS[idx], start_score) for idx in range(4)
         ]
         self.round_wind = "east"
         self.dealer = 0

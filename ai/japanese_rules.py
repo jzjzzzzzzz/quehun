@@ -1,15 +1,15 @@
-from collections import Counter
-
 from ai.agari import hand_counts, is_seven_pairs, is_standard_win, is_thirteen_orphans, is_win
 from ai.tile_set import PLAYABLE_TILES, canonical_hand
-
 
 DRAGONS = {"honors-red", "honors-green", "honors-white"}
 WINDS = {"honors-east", "honors-south", "honors-west", "honors-north"}
 TERMINALS = {
-    "characters-1", "characters-9",
-    "dots-1", "dots-9",
-    "bamboo-1", "bamboo-9",
+    "characters-1",
+    "characters-9",
+    "dots-1",
+    "dots-9",
+    "bamboo-1",
+    "bamboo-9",
 }
 HONORS = DRAGONS | WINDS
 
@@ -89,8 +89,6 @@ def yaku_for_win(hand, win_method="tsumo", seat_wind="east", round_wind="east", 
         return []
 
     yaku = []
-    counts = Counter(hand)
-
     if win_method == "tsumo":
         yaku.append("menzen_tsumo")
 
@@ -153,9 +151,7 @@ def estimate_points(yaku, dealer=False, win_method="ron"):
             han += 2
         elif name in {"chinitsu"}:
             han += 5
-        elif name == "toitoi":
-            han += 2
-        elif name == "chiitoitsu":
+        elif name == "toitoi" or name == "chiitoitsu":
             han += 2
         else:
             han += 1

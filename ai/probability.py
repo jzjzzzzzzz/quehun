@@ -1,5 +1,5 @@
 from ai.agari import winning_tiles
-from ai.tile_set import PLAYABLE_TILES, canonical_hand
+from ai.tile_set import canonical_hand
 from ai.ukeire import remaining_counts
 
 

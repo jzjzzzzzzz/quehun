@@ -24,7 +24,6 @@ from ai.notation import (
     validate_hand,
 )
 
-
 CASES = json.loads(
     (Path(__file__).parent / "fixtures" / "notation_cases.json").read_text(encoding="utf-8")
 )

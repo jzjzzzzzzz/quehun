@@ -6,9 +6,9 @@ from ai.engine import decide
 from ai.tile_set import canonical_hand
 from capture.screen import capture_screen
 from capture.windows_api import find_window, focus_window, foreground_window
-from cv.real_hand_parser import RealHandParser
-from cv.game_regions import GameRegionRecognizer
 from cv.action_buttons import ActionButtonDetector
+from cv.game_regions import GameRegionRecognizer
+from cv.real_hand_parser import RealHandParser
 from cv.screen_state import QueHunScreenStateDetector, ScreenState
 from runtime.clicker import LazyWindowsClicker, NoOpClicker
 from runtime.config import load_config
@@ -29,9 +29,7 @@ class AutoPlayController:
             hand_region=self._absolute_hand_region(),
             tile_count=self.config.get("tile_slots", self.config.get("tile_count", 14)),
         )
-        self.region_recognizer = GameRegionRecognizer(
-            classifier=self.parser.classifier
-        )
+        self.region_recognizer = GameRegionRecognizer(classifier=self.parser.classifier)
         self.action_detector = ActionButtonDetector()
         self.state_detector = QueHunScreenStateDetector()
 
@@ -283,9 +281,7 @@ class AutoPlayController:
                 ocr=getattr(self.state_detector, "ocr", None),
             )
             visible_tiles = [
-                tile
-                for player_discards in regions["discards"].values()
-                for tile in player_discards
+                tile for player_discards in regions["discards"].values() for tile in player_discards
             ] + list(regions["dora_indicators"])
             return {
                 "screen_state": screen.state.value,
@@ -326,16 +322,15 @@ class AutoPlayController:
             ["ron", "tsumo", "riichi", "kan", "pon", "chi", "pass"],
         )
         candidates = [
-            action for action in scene.get("visible_actions", [])
+            action
+            for action in scene.get("visible_actions", [])
             if action["action"] in allowed and action["confidence"] >= minimum
         ]
         if not candidates:
             return None
         candidates.sort(
             key=lambda action: (
-                priority.index(action["action"])
-                if action["action"] in priority
-                else len(priority),
+                priority.index(action["action"]) if action["action"] in priority else len(priority),
                 -float(action["confidence"]),
             )
         )
@@ -391,9 +386,7 @@ class AutoPlayController:
 
         return {
             "action": (
-                f"{action['action']}_dry_run"
-                if self.dry_run
-                else f"{action['action']}_click"
+                f"{action['action']}_dry_run" if self.dry_run else f"{action['action']}_click"
             ),
             "reason": "action button detected",
             "detected_action": action,
@@ -467,24 +460,21 @@ class AutoPlayController:
 
     def _confident_hand(self, details):
         minimum = self.config.get("min_confidence", 0.25)
-        return canonical_hand(
-            item["tile"] for item in details
-            if item["confidence"] >= minimum
-        )
+        return canonical_hand(item["tile"] for item in details if item["confidence"] >= minimum)
 
     def _confident_bonus_indices(self, details):
         minimum = self.config.get("min_confidence", 0.25)
         return [
-            item["index"] for item in details
-            if (
-                item["confidence"] >= minimum
-                and str(item["tile"]).startswith("bonus-")
-            )
+            item["index"]
+            for item in details
+            if (item["confidence"] >= minimum and str(item["tile"]).startswith("bonus-"))
         ]
 
     def _count_state(self, hand):
         hand_count = len(hand)
-        actionable = set(self.config.get("actionable_tile_counts", [self.config.get("tile_count", 14)]))
+        actionable = set(
+            self.config.get("actionable_tile_counts", [self.config.get("tile_count", 14)])
+        )
         waiting = set(self.config.get("waiting_tile_counts", []))
 
         if hand_count in actionable:
@@ -495,14 +485,13 @@ class AutoPlayController:
 
     def step(self, frame=None):
         self._refresh_parser_region()
-        if frame is None and self.config.get("focus_window", True):
-            if not self._focus_and_wait():
-                return {
-                    "action": "skip",
-                    "reason": "target window is not foreground",
-                    "details": [],
-                    "low_confidence_count": None,
-                }
+        if frame is None and self.config.get("focus_window", True) and not self._focus_and_wait():
+            return {
+                "action": "skip",
+                "reason": "target window is not foreground",
+                "details": [],
+                "low_confidence_count": None,
+            }
         frame = frame if frame is not None else capture_screen()
         scene = self._scene_state(frame)
         template_prompt_result = self._handle_template_action_prompt(scene)

@@ -1,19 +1,34 @@
 .venv/
+.venv*/
 .idea/
 .vscode/
+.claude/
 .tmp/
 debug/
 __pycache__/
 *.py[cod]
 *.log
 .pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.tox/
+.nox/
 .coverage
+.coverage.*
+coverage.xml
 htmlcov/
+build/
+dist/
+*.egg-info/
 
 # Local editor and OS files
 .DS_Store
 Thumbs.db
 desktop.ini
+*.local.md
+.env
+.env.*
+!.env.example
 
 # Generated model/training outputs
 checkpoints/

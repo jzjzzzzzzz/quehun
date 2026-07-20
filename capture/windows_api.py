@@ -1,8 +1,7 @@
 import ctypes
-import sys
 import subprocess
+import sys
 from ctypes import wintypes
-
 
 SW_RESTORE = 9
 HWND_TOP = 0
@@ -29,8 +28,8 @@ def _run_osascript(script):
     completed = subprocess.run(
         ["osascript", "-e", script],
         text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
+        capture_output=True,
+        check=False,
     )
     if completed.returncode != 0:
         message = completed.stderr.strip() or completed.stdout.strip()
@@ -39,7 +38,7 @@ def _run_osascript(script):
 
 
 def _list_macos_windows():
-    script = r'''
+    script = r"""
 set AppleScript's text item delimiters to linefeed
 set output to {}
 tell application "System Events"
@@ -60,7 +59,7 @@ tell application "System Events"
     end repeat
 end tell
 return output as text
-'''
+"""
     rows = _run_osascript(script)
     windows = []
     for row in rows.splitlines():
@@ -117,14 +116,16 @@ def list_windows():
         if title:
             rect = wintypes.RECT()
             user32.GetWindowRect(hwnd, ctypes.byref(rect))
-            windows.append({
-                "hwnd": int(hwnd),
-                "title": title,
-                "left": rect.left,
-                "top": rect.top,
-                "width": rect.right - rect.left,
-                "height": rect.bottom - rect.top,
-            })
+            windows.append(
+                {
+                    "hwnd": int(hwnd),
+                    "title": title,
+                    "left": rect.left,
+                    "top": rect.top,
+                    "width": rect.right - rect.left,
+                    "height": rect.bottom - rect.top,
+                }
+            )
         return True
 
     user32.EnumWindows(enum_proc_type(enum_proc), 0)
@@ -146,14 +147,15 @@ def focus_window(title, exact=False):
         if window is None:
             return None
         process_name = window.get("process") or window["title"]
+        escaped_process_name = str(process_name).replace("\\", "\\\\").replace('"', '\\"')
         script = f'''
 tell application "System Events"
-    set targetName to "{process_name.replace('"', '\\"')}"
+    set targetName to "{escaped_process_name}"
     if exists process targetName then
         set frontmost of process targetName to true
     end if
 end tell
-tell application "{process_name.replace('"', '\\"')}" to activate
+tell application "{escaped_process_name}" to activate
 '''
         _run_osascript(script)
         return window
@@ -186,7 +188,7 @@ tell application "{process_name.replace('"', '\\"')}" to activate
 
 def foreground_window():
     if _is_macos():
-        script = r'''
+        script = r"""
 tell application "System Events"
     set proc to first application process whose frontmost is true
     set processName to name of proc
@@ -201,7 +203,7 @@ tell application "System Events"
     set windowSize to size of win
     return processName & tab & processId & tab & "1" & tab & windowName & tab & (item 1 of windowPosition) & tab & (item 2 of windowPosition) & tab & (item 1 of windowSize) & tab & (item 2 of windowSize)
 end tell
-'''
+"""
         try:
             parts = _run_osascript(script).split("\t")
         except RuntimeError:

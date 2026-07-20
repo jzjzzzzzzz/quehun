@@ -1,6 +1,5 @@
 from ai.tile_set import canonical_hand
 
-
 DEFAULT_HAND = [
     "characters-1",
     "characters-2",

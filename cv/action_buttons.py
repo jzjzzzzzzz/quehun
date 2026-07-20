@@ -58,24 +58,24 @@ class ActionButtonDetector:
                 continue
             left = action_region["left"] + location[0]
             top = action_region["top"] + location[1]
-            detected.append({
-                "action": action,
-                "confidence": float(score),
-                "source": "template",
-                "region": {
-                    "left": left,
-                    "top": top,
-                    "width": width,
-                    "height": height,
-                },
-                "center": {
-                    "x": left + width // 2,
-                    "y": top + height // 2,
-                },
-            })
-        detected.extend(
-            self._detect_text_actions(crop, action_region, ocr)
-        )
+            detected.append(
+                {
+                    "action": action,
+                    "confidence": float(score),
+                    "source": "template",
+                    "region": {
+                        "left": left,
+                        "top": top,
+                        "width": width,
+                        "height": height,
+                    },
+                    "center": {
+                        "x": left + width // 2,
+                        "y": top + height // 2,
+                    },
+                }
+            )
+        detected.extend(self._detect_text_actions(crop, action_region, ocr))
         return self._dedupe_actions(detected)
 
     def _detect_text_actions(self, crop, action_region, ocr):
@@ -103,22 +103,24 @@ class ActionButtonDetector:
         for index, action in enumerate(actions):
             left = int(round(action_region["left"] + slot_width * index))
             width = int(round(slot_width))
-            found.append({
-                "action": action,
-                "confidence": 0.74,
-                "source": "ocr",
-                "text": text,
-                "region": {
-                    "left": left,
-                    "top": action_region["top"],
-                    "width": width,
-                    "height": action_region["height"],
-                },
-                "center": {
-                    "x": int(round(left + width / 2)),
-                    "y": int(round(action_region["top"] + action_region["height"] / 2)),
-                },
-            })
+            found.append(
+                {
+                    "action": action,
+                    "confidence": 0.74,
+                    "source": "ocr",
+                    "text": text,
+                    "region": {
+                        "left": left,
+                        "top": action_region["top"],
+                        "width": width,
+                        "height": action_region["height"],
+                    },
+                    "center": {
+                        "x": int(round(left + width / 2)),
+                        "y": int(round(action_region["top"] + action_region["height"] / 2)),
+                    },
+                }
+            )
         return found
 
     @staticmethod

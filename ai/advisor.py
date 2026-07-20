@@ -45,9 +45,7 @@ def tile_danger(tile, discards=None, visible_tiles=None):
         return 1.0
     discards = discards or {}
     all_discards = canonical_hand(
-        tile_name
-        for player_discards in discards.values()
-        for tile_name in player_discards
+        tile_name for player_discards in discards.values() for tile_name in player_discards
     )
     visible = canonical_hand(visible_tiles)
     if tile in all_discards:
@@ -120,14 +118,16 @@ def analyze_hand(
         danger = tile_danger(discard, discards=discards, visible_tiles=visible)
         shape_value = _shape_value(discard, after)
         score = -shanten * 1000 + ukeire * 12 + shape_value - danger * 20
-        choices.append(DiscardAdvice(
-            discard=discard,
-            score=round(score, 2),
-            shanten=shanten,
-            ukeire=ukeire,
-            effective_tiles=effective,
-            danger=danger,
-        ))
+        choices.append(
+            DiscardAdvice(
+                discard=discard,
+                score=round(score, 2),
+                shanten=shanten,
+                ukeire=ukeire,
+                effective_tiles=effective,
+                danger=danger,
+            )
+        )
 
     choices.sort(key=lambda item: (item.shanten, -item.ukeire, -item.score, item.discard))
     best_shanten = choices[0].shanten
@@ -135,7 +135,7 @@ def analyze_hand(
     for choice in choices:
         choice.reasons = _reasons(choice, hand, best_shanten, best_ukeire)
 
-    top_choices = choices[:max(1, int(top_n))]
+    top_choices = choices[: max(1, int(top_n))]
     return AdviceResult(
         recommended_discard=top_choices[0].discard if top_choices else None,
         top_choices=top_choices,

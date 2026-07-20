@@ -1,10 +1,10 @@
+from ai.advisor import analyze_hand
+from ai.agari import winning_tiles
+from ai.probability import draw_probability
 from ai.shanten import simple_shanten
 from ai.strategy import strategy_score
 from ai.tile_set import canonical_hand
 from ai.ukeire import ukeire
-from ai.agari import winning_tiles
-from ai.probability import draw_probability
-from ai.advisor import analyze_hand
 
 
 def decide(hand, visible_tiles=None):
@@ -52,10 +52,7 @@ def decide(hand, visible_tiles=None):
             best = candidate
 
     advisor = analyze_hand(hand, visible_tiles=visible, recognition_confidence=1.0)
-    advice_by_tile = {
-        choice.discard: choice
-        for choice in advisor.top_choices
-    }
+    advice_by_tile = {choice.discard: choice for choice in advisor.top_choices}
     for candidate in candidates:
         advice = advice_by_tile.get(candidate["discard"])
         candidate["reasons"] = advice.reasons if advice else []

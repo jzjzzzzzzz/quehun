@@ -51,12 +51,14 @@ class RealHandParser:
                 1.0,
                 float((gray > 80).mean()) * 0.6 + float((edges > 0).mean()) * 2.5,
             )
-            boxes.append({
-                "index": idx,
-                "box": (x1, 0, x2 - x1, height),
-                "occupancy": occupancy,
-                "image": tile,
-            })
+            boxes.append(
+                {
+                    "index": idx,
+                    "box": (x1, 0, x2 - x1, height),
+                    "occupancy": occupancy,
+                    "image": tile,
+                }
+            )
         return boxes
 
     def parse_with_details(self, frame):
@@ -67,14 +69,16 @@ class RealHandParser:
             idx = box["index"]
             tile_image = box["image"]
             classified = self.classifier.classify(tile_image)
-            results.append({
-                "index": idx,
-                "tile": classified["tile"],
-                "confidence": classified["confidence"] * box["occupancy"],
-                "error": classified["error"],
-                "occupancy": box["occupancy"],
-                "box": box["box"],
-            })
+            results.append(
+                {
+                    "index": idx,
+                    "tile": classified["tile"],
+                    "confidence": classified["confidence"] * box["occupancy"],
+                    "error": classified["error"],
+                    "occupancy": box["occupancy"],
+                    "box": box["box"],
+                }
+            )
 
         hand = canonical_hand([result["tile"] for result in results])
         return hand, results
@@ -119,12 +123,14 @@ class RealHandParser:
         details = []
         for idx, tile_image in self.split_tiles(hand_image):
             classified = self.classifier.classify(tile_image)
-            details.append({
-                "index": idx,
-                "tile": classified["tile"],
-                "confidence": classified["confidence"],
-                "error": classified["error"],
-            })
+            details.append(
+                {
+                    "index": idx,
+                    "tile": classified["tile"],
+                    "confidence": classified["confidence"],
+                    "error": classified["error"],
+                }
+            )
             safe_tile = str(classified["tile"]).replace("/", "-")
             path = os.path.join(output_dir, f"tile-{idx:02d}-{safe_tile}.png")
             cv2.imwrite(path, tile_image)

@@ -5,7 +5,6 @@ import sys
 import time
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_LOG = ROOT / ".tmp" / "nightly-check.log"
 
@@ -38,7 +37,20 @@ def main():
     log_path = Path(args.log)
     log_path.parent.mkdir(parents=True, exist_ok=True)
     checks = [
-        [sys.executable, "-m", "compileall", "-q", "ai", "capture", "cv", "model", "runtime", "state", "ui", "main.py"],
+        [
+            sys.executable,
+            "-m",
+            "compileall",
+            "-q",
+            "ai",
+            "capture",
+            "cv",
+            "model",
+            "runtime",
+            "state",
+            "ui",
+            "main.py",
+        ],
         [sys.executable, "-m", "pytest", "-q"],
     ]
 

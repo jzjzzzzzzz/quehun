@@ -1,24 +1,27 @@
 import os
-import sys
 import tempfile
 
 import numpy as np
-
-ROOT = os.path.dirname(os.path.dirname(__file__))
-if ROOT not in sys.path:
-    sys.path.insert(0, ROOT)
 
 from cv.screen_state import ScreenState, ScreenStateResult
 from runtime.analyzer import AnalysisController
 from runtime.config import save_config
 
-
 HAND = [
-    "characters-1", "characters-2", "characters-3",
-    "dots-5", "dots-6", "dots-7",
-    "bamboo-7", "bamboo-8", "bamboo-9",
-    "honors-east", "honors-east", "honors-red",
-    "honors-green", "honors-white",
+    "characters-1",
+    "characters-2",
+    "characters-3",
+    "dots-5",
+    "dots-6",
+    "dots-7",
+    "bamboo-7",
+    "bamboo-8",
+    "bamboo-9",
+    "honors-east",
+    "honors-east",
+    "honors-red",
+    "honors-green",
+    "honors-white",
 ]
 
 
@@ -56,22 +59,25 @@ class FakeClicker:
 def make_controller(auto_click):
     directory = tempfile.TemporaryDirectory()
     path = os.path.join(directory.name, "config.json")
-    save_config({
-        "window_title": "test",
-        "region_mode": "window",
-        "hand_region": {"left": 0, "top": 0, "width": 140, "height": 40},
-        "tile_slots": 14,
-        "tile_count": 14,
-        "stable_frames": 1,
-        "click_cooldown": 0.0,
-        "min_confidence": 0.25,
-        "click": {
-            "min_confidence": 0.8,
-            "require_in_game": True,
-            "require_foreground": False,
-            "y_offset_ratio": 0.5,
+    save_config(
+        {
+            "window_title": "test",
+            "region_mode": "window",
+            "hand_region": {"left": 0, "top": 0, "width": 140, "height": 40},
+            "tile_slots": 14,
+            "tile_count": 14,
+            "stable_frames": 1,
+            "click_cooldown": 0.0,
+            "min_confidence": 0.25,
+            "click": {
+                "min_confidence": 0.8,
+                "require_in_game": True,
+                "require_foreground": False,
+                "y_offset_ratio": 0.5,
+            },
         },
-    }, path)
+        path,
+    )
     clicker = FakeClicker()
     controller = AnalysisController(
         config_path=path,

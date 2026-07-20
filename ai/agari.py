@@ -1,15 +1,24 @@
-from functools import lru_cache
+from functools import cache
 
 from ai.tile_set import PLAYABLE_TILES, canonical_hand
 
-
-THIRTEEN_ORPHANS = frozenset({
-    "characters-1", "characters-9",
-    "dots-1", "dots-9",
-    "bamboo-1", "bamboo-9",
-    "honors-east", "honors-south", "honors-west", "honors-north",
-    "honors-red", "honors-green", "honors-white",
-})
+THIRTEEN_ORPHANS = frozenset(
+    {
+        "characters-1",
+        "characters-9",
+        "dots-1",
+        "dots-9",
+        "bamboo-1",
+        "bamboo-9",
+        "honors-east",
+        "honors-south",
+        "honors-west",
+        "honors-north",
+        "honors-red",
+        "honors-green",
+        "honors-white",
+    }
+)
 
 
 def hand_counts(hand):
@@ -19,7 +28,7 @@ def hand_counts(hand):
     return tuple(counts)
 
 
-@lru_cache(maxsize=None)
+@cache
 def _can_form_melds(counts):
     counts = list(counts)
 

@@ -4,7 +4,6 @@ import shutil
 
 from ai.tile_set import canonical_tile
 
-
 DEFAULT_DEBUG_DIR = "debug/tiles/latest"
 DEFAULT_OUTPUT_DIR = "templates/tiles"
 
@@ -36,7 +35,7 @@ def learn_debug_tiles(labels, debug_dir=DEFAULT_DEBUG_DIR, output_dir=DEFAULT_OU
         )
 
     written = []
-    for index, (source, label) in enumerate(zip(tile_paths, labels)):
+    for index, (source, label) in enumerate(zip(tile_paths, labels, strict=True)):
         if label is None:
             continue
 

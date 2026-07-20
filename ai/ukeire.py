@@ -33,9 +33,7 @@ def effective_tiles(hand, visible_tiles=None):
 
         test_hand = hand + [tile]
         next_shanten = simple_shanten(test_hand)
-        if base == 0 and is_win(test_hand):
-            effective[tile] = count
-        elif base > 0 and next_shanten < base:
+        if base == 0 and is_win(test_hand) or base > 0 and next_shanten < base:
             effective[tile] = count
 
     return effective

@@ -9,13 +9,12 @@ behaviour.
 
 from __future__ import annotations
 
-from collections import Counter
-from dataclasses import dataclass, field
 import re
-from typing import Iterable, Sequence
+from collections import Counter
+from collections.abc import Iterable, Sequence
+from dataclasses import dataclass, field
 
 from ai.tile_set import PLAYABLE_TILES, canonical_tile
-
 
 COMPACT_SUITS = {
     "m": "characters",
@@ -214,7 +213,7 @@ def parse_compact_hand(value: str | Iterable[str]) -> list[str]:
     position = 0
     for match in _GROUP_RE.finditer(compact):
         if match.start() != position:
-            raise NotationError(f"invalid notation near {compact[position:match.start()]!r}")
+            raise NotationError(f"invalid notation near {compact[position : match.start()]!r}")
         digits, marker = match.groups()
         marker = marker.lower()
         for digit in digits:
@@ -320,7 +319,11 @@ def validate_hand(
     errors: list[str] = []
     warnings: list[str] = []
 
-    invalid = [str(raw) for raw, tile in zip(raw_tiles, canonical) if tile not in PLAYABLE_TILES]
+    invalid = [
+        str(raw)
+        for raw, tile in zip(raw_tiles, canonical, strict=True)
+        if tile not in PLAYABLE_TILES
+    ]
     if invalid:
         errors.append(f"unknown tiles: {', '.join(invalid)}")
 

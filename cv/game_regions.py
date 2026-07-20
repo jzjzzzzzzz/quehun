@@ -1,13 +1,12 @@
 import json
-from pathlib import Path
 from collections import defaultdict
+from pathlib import Path
 
 import cv2
 import numpy as np
 
 from ai.tile_set import canonical_tile
 from cv.template_classifier import TemplateTileClassifier
-
 
 DEFAULT_REGIONS_PATH = "config/screen_regions.json"
 
@@ -32,12 +31,14 @@ def update_region(name, region, frame_size, path=DEFAULT_REGIONS_PATH):
     scale_x = reference["width"] / max(1, frame_width)
     scale_y = reference["height"] / max(1, frame_height)
     current = dict(config["regions"].get(name, {}))
-    current.update({
-        "left": int(round(region["left"] * scale_x)),
-        "top": int(round(region["top"] * scale_y)),
-        "width": int(round(region["width"] * scale_x)),
-        "height": int(round(region["height"] * scale_y)),
-    })
+    current.update(
+        {
+            "left": int(round(region["left"] * scale_x)),
+            "top": int(round(region["top"] * scale_y)),
+            "width": int(round(region["width"] * scale_x)),
+            "height": int(round(region["height"] * scale_y)),
+        }
+    )
     config["regions"][name] = current
     save_regions(config, path)
     return current
@@ -110,17 +111,20 @@ class TileGridParser:
                 )
                 classified = self.classifier.classify(tile_image)
                 confidence = classified["confidence"] * occupancy
-                details.append({
-                    "row": row,
-                    "column": column,
-                    "tile": classified["tile"],
-                    "confidence": confidence,
-                    "occupancy": occupancy,
-                    "box": (x1, y1, x2 - x1, y2 - y1),
-                })
+                details.append(
+                    {
+                        "row": row,
+                        "column": column,
+                        "tile": classified["tile"],
+                        "confidence": confidence,
+                        "occupancy": occupancy,
+                        "box": (x1, y1, x2 - x1, y2 - y1),
+                    }
+                )
 
         tiles = [
-            item["tile"] for item in details
+            item["tile"]
+            for item in details
             if (
                 item["confidence"] >= self.min_confidence
                 and item["occupancy"] >= self.min_occupancy
@@ -249,18 +253,21 @@ class ContourTileParser:
         details = []
         self.last_crops = []
         for index, (x, y, width, height) in enumerate(boxes):
-            tile_image = crop[y:y + height, x:x + width]
+            tile_image = crop[y : y + height, x : x + width]
             self.last_crops.append(tile_image.copy())
             classified = self.classifier.classify(tile_image)
-            details.append({
-                "index": index,
-                "tile": classified["tile"],
-                "confidence": classified["confidence"],
-                "error": classified["error"],
-                "box": (x, y, width, height),
-            })
+            details.append(
+                {
+                    "index": index,
+                    "tile": classified["tile"],
+                    "confidence": classified["confidence"],
+                    "error": classified["error"],
+                    "box": (x, y, width, height),
+                }
+            )
         tiles = [
-            item["tile"] for item in details
+            item["tile"]
+            for item in details
             if item["tile"] and item["confidence"] >= self.min_confidence
         ]
         return tiles, details
@@ -272,9 +279,7 @@ class GameRegionRecognizer:
         self.config = load_regions(self.regions_path)
         self.parser = TileGridParser(classifier=classifier)
         self.discard_parser = ContourTileParser()
-        self.dora_parser = ContourTileParser(
-            classifier=self.discard_parser.classifier
-        )
+        self.dora_parser = ContourTileParser(classifier=self.discard_parser.classifier)
         self.last_discard_crops = {}
         self.round_templates = self._load_round_templates()
         self.seat_templates = self._load_wind_templates("templates/seat")
@@ -385,10 +390,15 @@ class GameRegionRecognizer:
     def _wind_from_text(text):
         normalized = (text or "").lower()
         for word, wind in (
-            ("东", "east"), ("東", "east"), ("east", "east"),
-            ("南", "south"), ("south", "south"),
-            ("西", "west"), ("west", "west"),
-            ("北", "north"), ("north", "north"),
+            ("东", "east"),
+            ("東", "east"),
+            ("east", "east"),
+            ("南", "south"),
+            ("south", "south"),
+            ("西", "west"),
+            ("west", "west"),
+            ("北", "north"),
+            ("north", "north"),
         ):
             if word in normalized:
                 return wind

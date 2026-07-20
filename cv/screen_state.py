@@ -1,13 +1,13 @@
-from dataclasses import dataclass, field
-from enum import Enum
-from pathlib import Path
 import shutil
+from dataclasses import dataclass, field
+from enum import StrEnum
+from pathlib import Path
 
 import cv2
 import numpy as np
 
 
-class ScreenState(str, Enum):
+class ScreenState(StrEnum):
     ROOM_CREATION = "room_creation"
     IN_GAME = "in_game"
     LOADING = "loading"
@@ -39,9 +39,7 @@ class OCRReader:
             self._pytesseract = pytesseract
             executable = shutil.which("tesseract")
             if not executable:
-                default_executable = Path(
-                    "C:/Program Files/Tesseract-OCR/tesseract.exe"
-                )
+                default_executable = Path("C:/Program Files/Tesseract-OCR/tesseract.exe")
                 if default_executable.is_file():
                     executable = str(default_executable)
             if executable:
@@ -79,12 +77,30 @@ class OCRReader:
 
 class QueHunScreenStateDetector:
     ROOM_WORDS = (
-        "create room", "room settings", "friend", "friendly", "创建房间", "友人场",
-        "四人麻将", "人机",
+        "create room",
+        "room settings",
+        "friend",
+        "friendly",
+        "创建房间",
+        "友人场",
+        "四人麻将",
+        "人机",
     )
     GAME_WORDS = (
-        "east", "south", "west", "north", "riichi", "ron", "tsumo",
-        "东", "南", "西", "北", "立直", "荣和", "自摸",
+        "east",
+        "south",
+        "west",
+        "north",
+        "riichi",
+        "ron",
+        "tsumo",
+        "东",
+        "南",
+        "西",
+        "北",
+        "立直",
+        "荣和",
+        "自摸",
     )
     LOADING_WORDS = ("loading", "connecting", "加载", "连接中")
 
@@ -112,9 +128,7 @@ class QueHunScreenStateDetector:
         template_state, template_score = self._template_state(frame)
         if template_state is not None:
             scores[template_state] += template_score * 0.75
-            reasons.append(
-                f"screen template {template_state.value} {template_score:.2f}"
-            )
+            reasons.append(f"screen template {template_state.value} {template_score:.2f}")
 
         edge_density = self._edge_density(frame)
         color_variance = float(np.std(cv2.resize(frame, (64, 36)))) / 128.0
@@ -208,7 +222,7 @@ class QueHunScreenStateDetector:
     @staticmethod
     def _center_dark_ratio(frame):
         height, width = frame.shape[:2]
-        crop = frame[height // 4: height * 3 // 4, width // 4: width * 3 // 4]
+        crop = frame[height // 4 : height * 3 // 4, width // 4 : width * 3 // 4]
         if crop.size == 0:
             return 0.0
         gray = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)

@@ -28,10 +28,7 @@ class TemplateTileClassifier:
         if image is None:
             raise ValueError("Cannot classify an empty image.")
 
-        if len(image.shape) == 3:
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        else:
-            gray = image
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY) if len(image.shape) == 3 else image
 
         resized = cv2.resize(gray, self.size, interpolation=cv2.INTER_AREA)
         return cv2.equalizeHist(resized).astype(np.float32) / 255.0
@@ -71,10 +68,7 @@ class TemplateTileClassifier:
                         continue
                     grouped[canonical].append(self._preprocess(image))
 
-        return {
-            label: images
-            for label, images in grouped.items()
-        }
+        return {label: images for label, images in grouped.items()}
 
     def _load_dataset_prototypes(self):
         grouped = defaultdict(list)
@@ -94,10 +88,7 @@ class TemplateTileClassifier:
         if not grouped:
             raise RuntimeError("No usable tile templates were loaded from the dataset.")
 
-        return {
-            label: np.mean(images, axis=0)
-            for label, images in grouped.items()
-        }
+        return {label: np.mean(images, axis=0) for label, images in grouped.items()}
 
     def _load_prototypes(self):
         calibrated = self._load_calibrated_prototypes()

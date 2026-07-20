@@ -1,6 +1,7 @@
 import os
 import subprocess
 import time
+from contextlib import suppress
 from pathlib import Path
 from tempfile import NamedTemporaryFile
 
@@ -31,7 +32,7 @@ def capture_screen(region=None):
 
     try:
         img = np.array(ImageGrab.grab(bbox=bbox))
-    except OSError as exc:
+    except OSError:
         try:
             return capture_screen_gdi(region=region)
         except Exception as gdi_exc:
@@ -61,8 +62,8 @@ def capture_screen_macos(region=None):
         completed = subprocess.run(
             command,
             text=True,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
+            check=False,
             timeout=10,
         )
         if completed.returncode != 0 or not os.path.exists(path):
@@ -75,10 +76,8 @@ def capture_screen_macos(region=None):
         image = np.array(Image.open(path).convert("RGB"))
         return cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     finally:
-        try:
+        with suppress(OSError):
             os.remove(path)
-        except OSError:
-            pass
 
 
 def capture_screen_gdi(region=None):
@@ -298,10 +297,7 @@ class ScreenCapture:
         import cv2
 
         self.debug_dir.mkdir(parents=True, exist_ok=True)
-        safe_label = "".join(
-            char if char.isalnum() or char in "-_" else "_"
-            for char in str(label)
-        )
+        safe_label = "".join(char if char.isalnum() or char in "-_" else "_" for char in str(label))
         timestamp = time.strftime("%Y%m%d-%H%M%S")
         millis = int((time.time() % 1) * 1000)
         path = self.debug_dir / f"{timestamp}-{millis:03d}-{safe_label}.png"
@@ -315,14 +311,13 @@ class ScreenCapture:
             return
         files = sorted(
             (
-                path for path in self.debug_dir.iterdir()
+                path
+                for path in self.debug_dir.iterdir()
                 if path.is_file() and path.suffix.lower() in {".png", ".jpg", ".jpeg"}
             ),
             key=lambda path: path.stat().st_mtime,
             reverse=True,
         )
-        for old_path in files[self.max_debug_files:]:
-            try:
+        for old_path in files[self.max_debug_files :]:
+            with suppress(OSError):
                 old_path.unlink()
-            except OSError:
-                pass

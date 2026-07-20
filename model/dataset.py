@@ -1,8 +1,10 @@
 import os
+
 import pandas as pd
+import torch
 from PIL import Image
 from torch.utils.data import Dataset
-import torch
+
 
 class MahjongDataset(Dataset):
     def __init__(self, img_dir, csv_file, transform=None):
@@ -16,7 +18,7 @@ class MahjongDataset(Dataset):
         self.label_col = self.data.columns[-1]
 
         self.labels = sorted(self.data[self.label_col].unique())
-        self.label2idx = {l:i for i,l in enumerate(self.labels)}
+        self.label2idx = {label: index for index, label in enumerate(self.labels)}
 
     def __len__(self):
         return len(self.data)

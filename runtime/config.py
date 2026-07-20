@@ -2,7 +2,6 @@ import json
 import os
 from copy import deepcopy
 
-
 DEFAULT_CONFIG_PATH = "config/autoplay.json"
 
 
