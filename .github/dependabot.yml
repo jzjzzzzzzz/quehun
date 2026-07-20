@@ -2,11 +2,19 @@ version: 2
 updates:
   - package-ecosystem: pip
     directory: /
+    versioning-strategy: increase-if-necessary
     schedule:
       interval: monthly
+    ignore:
+      - dependency-name: "*"
+        update-types: ["version-update:semver-major"]
     groups:
-      python-runtime:
-        patterns: ["*"]
+      runtime:
+        patterns: [numpy, opencv-python, Pillow, pytesseract]
+      development:
+        patterns: [pre-commit, pytest, ruff]
+      training:
+        patterns: [pandas, torch, torchvision]
 
   - package-ecosystem: github-actions
     directory: /
