@@ -1,5 +1,5 @@
 -r requirements.txt
 
-pytest>=8.0,<10
-pre-commit>=4.0,<5
-ruff>=0.16,<0.17
+pytest>=9.1.1,<10
+pre-commit>=4.6.2,<5
+ruff>=0.16.4,<0.17
