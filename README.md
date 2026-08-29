@@ -4,6 +4,10 @@
 [![Python 3.11+](https://img.shields.io/badge/python-3.11%2B-3776AB.svg)](https://www.python.org/)
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 
+<p align="center">
+  <strong>简体中文</strong> · <a href="README.en.md">English</a>
+</p>
+
 雀魂画面识别、日麻牌效率分析和可选安全点击工具。项目同时提供无需游戏客户端的
 四人自对局模拟器，以及 Windows/macOS 实机只读分析工作台。
 
